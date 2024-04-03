@@ -1,0 +1,8 @@
+prefix=/home/polimi/robotics/devel
+
+Name: first_project
+Description: Description of first_project
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

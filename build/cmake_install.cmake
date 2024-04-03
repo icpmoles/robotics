@@ -139,6 +139,7 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   include("/home/polimi/robotics/build/service/cmake_install.cmake")
   include("/home/polimi/robotics/build/tf/cmake_install.cmake")
   include("/home/polimi/robotics/build/timer/cmake_install.cmake")
+  include("/home/polimi/robotics/build/first_project/cmake_install.cmake")
 
 endif()
 

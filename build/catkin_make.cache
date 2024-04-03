@@ -1,2 +1,2 @@
-custom_messages:parameter_test:pub_sub:pub_sub_same:pub_sub_test:service:tf:timer
+custom_messages:first_project:parameter_test:pub_sub:pub_sub_same:pub_sub_test:service:tf:timer
 -DCATKIN_DEVEL_PREFIX=/home/polimi/robotics/devel -DCMAKE_INSTALL_PREFIX=/home/polimi/robotics/install -G Unix Makefiles

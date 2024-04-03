@@ -181,3 +181,10 @@
 /home/polimi/robotics/build/timer/CMakeFiles/edit_cache.dir
 /home/polimi/robotics/build/timer/CMakeFiles/test.dir
 /home/polimi/robotics/build/timer/CMakeFiles/timed_pub.dir
+/home/polimi/robotics/build/first_project/CMakeFiles/install/strip.dir
+/home/polimi/robotics/build/first_project/CMakeFiles/install/local.dir
+/home/polimi/robotics/build/first_project/CMakeFiles/install.dir
+/home/polimi/robotics/build/first_project/CMakeFiles/list_install_components.dir
+/home/polimi/robotics/build/first_project/CMakeFiles/rebuild_cache.dir
+/home/polimi/robotics/build/first_project/CMakeFiles/edit_cache.dir
+/home/polimi/robotics/build/first_project/CMakeFiles/test.dir
