@@ -14,13 +14,13 @@ LLA_paramsid1{{Configuration}}
 ```mermaid
 flowchart TD
 LLA_paramsid{{Latitude\nLongitude\nAltitude}}-.-ogps2odom;
-gps([/fix])--->gps2odom(gps2odom);
+gps([/fix])--->gps2odom(gps_to_odom);
 gps2odom-->id2([/gps_odom]);
-id2-->gps_o2t(odom2tf);
+id2-->gps_o2t(odom_to_tf);
 gps_o2t-->gpstf([/gps_tf]);
-id3([/wheel_odom])-->wheel_o2t(odom2tf);
+id3([/wheel_odom])-->wheel_o2t(odom_to_tf);
 wheel_o2t-->2ndtf([/wheel_tf]);
-2ndtf-->3rdnode{TF\nbroadcaster}
+2ndtf-->3rdnode{lidar_select}
 gpstf-->3rdnode;
 rqt{{Dynamic\nSelector}}-.-o3rdnode;
 3rdnode==>Rviz
