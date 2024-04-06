@@ -7,23 +7,18 @@
 #include <sstream>
 
 
-// class gpsCallback {
-//     public:
 
-//     void chatterCallback(const std_msgs::String::ConstPtr& msg){
-        
-//     ROS_INFO("I heard: [%s]", msg->data.c_str()); //print out we receive a message
-//     }
-// private:
-
-// }
-
-void gpsCallback(const sensor_msgs::NavSatFix::ConstPtr& msg, bool toInit){
+void gpsCallback(const sensor_msgs::NavSatFix::ConstPtr& msg, bool *toInit, ros::NodeHandle nh){
     //print out the received lat
-    ROS_INFO("Latitude: [%s]", std::to_string(msg->latitude)); 
-    if (toInit){
-        ROS_INFO("datum to initialize");
+    ROS_INFO("Latitude: [%f]", msg->latitude); 
+    
+    if (*toInit==true) {
+        ROS_INFO("Initializing Datum");
+        nh.setParam("/lat_zero", msg->latitude);
+        nh.setParam("/lon_zero", msg->longitude);
+        nh.setParam("/alt_zero", msg->altitude);
     }
+
 }
 
 int main(int argc, char **argv){
@@ -39,57 +34,28 @@ int main(int argc, char **argv){
         nh.getParam("/lat_zero", datum_latitide);  
         nh.getParam("/lon_zero", datum_longitude);
         nh.getParam("/alt_zero", datum_altitude);
-        ROS_INFO("Initial datum acquired by parameters"); 
+        ROS_INFO("Initial datum already set"); 
     } else {
         datumToInit = true;
         ROS_INFO("Initial datum is going to be aquired by GPS data"); 
     }
     // subscribe to gps data
     // ros::Subscriber gps_sub = nh.subscribe("fix", 1, gpsCallback);
-    ros::Subscriber gps_sub = nh.subscribe("fix", 1, boost::bind(gpsCallback, _1, datumToInit));
-
+    // the callback functions also gets the bool if it's supposed to set the datum or not
+    ros::Subscriber gps_sub = nh.subscribe<sensor_msgs::NavSatFix> ("fix", 1, boost::bind(gpsCallback, _1, &datumToInit, nh));
+    datumToInit=false; //we assume that the callback is going to do its job somehow
 
     ros::Publisher pub = nh.advertise<nav_msgs::Odometry>("gps_odom", 5);
 
 
 
-	// ros::Publisher chatter_pub = nh.advertise<std_msgs::String>("global_parameter", 1000); // publish global topic, no node name
+	ros::Rate loop_rate(30); 
 
-	// std::string name;
-	// n.getParam("name", name);  //get global param
-	
-	// std::string local_name;
-	// nh_private.getParam("name", local_name); //get local param
-	
-	// std::string local_name_from_global;
-	// std::string param_name = ros::this_node::getName() + "/name"; // we build the "path" of the parameter, it works somehow
-	// ROS_INFO("local param name: %s", param_name.c_str()); // we use the ROS api to retrieve the parameter by providing the path, this can be done local to local but also from other nodes
-	// n.getParam(param_name, local_name_from_global);  //get local param using global nodehandle
-
-	// ros::Rate loop_rate(10); nh.hasParam("/lat_zero") and nh.hasParam("/lon_zero") and nh.hasParam("/alt_zero") ) 
+   
 
   
   	while (ros::ok()){
 	    
-        if (datumToInit==true) {
-            nh.setParam("/lat_zero", gps_sub);
-            nh.setParam("/lon_zero", 5);
-            nh.setParam("/alt_zero", 5);
-            datumToInit=false;
-        } else {
-            datumToInit=false;
-        }
-
-        // std_msgs::String msg;
-        // msg.data = name;
-        
-        // std_msgs::String local_msg;
-        // local_msg.data = local_name;
-
-        // ROS_INFO("%s", local_name_from_global.c_str());
-
-        // chatter_pub.publish(msg);
-        // local_chatter_pub.publish(local_msg);
 
         ros::spinOnce();
 
