@@ -1,8 +1,0 @@
-prefix=/home/polimi/robotics/install
-
-Name: timer
-Description: Description of timer
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 

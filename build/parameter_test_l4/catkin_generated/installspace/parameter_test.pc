@@ -1,8 +1,0 @@
-prefix=/home/polimi/robotics/install
-
-Name: parameter_test
-Description: Description of parameter_test
-Version: 0.0.0
-Cflags: -I${prefix}/include
-Libs: -L${prefix}/lib 
-Requires: 

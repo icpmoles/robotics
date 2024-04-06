@@ -1,8 +1,0 @@
-prefix=/home/polimi/robotics/install
-
-Name: pub_sub_same
-Description: Description of pub_sub_same
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 
