@@ -133,43 +133,44 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-################
+
+
+#################
 ## First Node ##
+#################
+add_executable(
+  first_node src/gps_to_odom.cpp
+)
+
+target_link_libraries(first_node
+  ${catkin_LIBRARIES}
+)
+
 ################
-add_executable(
-  first_project src/odom_to_tf.cpp
-)
-
-target_link_libraries(odom_to_tf
-  ${catkin_LIBRARIES}
-)
-
-
-#################
 ## Second Node ##
-#################
-add_executable(
-  first_project src/gps_to_odom.cpp
-)
+################
+# add_executable(
+#   second_node src/odom_to_tf.cpp
+# )
 
-target_link_libraries(gps_to_odom
-  ${catkin_LIBRARIES}
-)
+# target_link_libraries(second_node
+#   ${catkin_LIBRARIES}
+# )
 
 ################
 ## Third Node ##
 ################
 
-add_executable(
-  first_project src/lidar_select.cpp
-)
+# add_executable(
+#   third_node src/lidar_select.cpp
+# )
 
-add_dependencies(lidar_select 
-${PROJECT_NAME}_gencfg)
+# add_dependencies(third_node 
+# ${PROJECT_NAME}_gencfg)
 
-target_link_libraries(lidar_select
-  ${catkin_LIBRARIES}
-)
+# target_link_libraries(third_node
+#   ${catkin_LIBRARIES}
+# )
 
 #############
 ## Install ##
