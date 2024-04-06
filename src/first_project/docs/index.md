@@ -1,3 +1,10 @@
+## cmds
+
+```bash
+rosbag play -l src/bags/robotics.bag
+rosrun first_project first_node
+```
+
 ## First Node
 
 It receives the packets from the GPS receiver on the `/fix` topic with a `sensor_msgs/NavSatFix` type.
