@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   tf
+  dynamic_reconfigure
 )
 
 ## System dependencies are found with CMake's conventions
@@ -88,10 +89,9 @@ find_package(catkin REQUIRED COMPONENTS
 ##     and list every .cfg file to be processed
 
 ## Generate dynamic reconfigure parameters in the 'cfg' folder
-# generate_dynamic_reconfigure_options(
-#   cfg/DynReconf1.cfg
-#   cfg/DynReconf2.cfg
-# )
+generate_dynamic_reconfigure_options(
+  cfg/lidar_params.cfg
+)
 
 ###################################
 ## catkin specific configuration ##
@@ -133,22 +133,43 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/first_project_node.cpp)
+################
+## First Node ##
+################
+add_executable(
+  first_project src/odom_to_tf.cpp
+)
 
-## Rename C++ executable without prefix
-## The above recommended prefix causes long target names, the following renames the
-## target back to the shorter version for ease of user use
-## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
-# set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
+target_link_libraries(odom_to_tf
+  ${catkin_LIBRARIES}
+)
 
-## Add cmake target dependencies of the executable
-## same as for the library above
-# add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-## Specify libraries to link a library or executable target against
-# target_link_libraries(${PROJECT_NAME}_node
-#   ${catkin_LIBRARIES}
-# )
+#################
+## Second Node ##
+#################
+add_executable(
+  first_project src/gps_to_odom.cpp
+)
+
+target_link_libraries(gps_to_odom
+  ${catkin_LIBRARIES}
+)
+
+################
+## Third Node ##
+################
+
+add_executable(
+  first_project src/lidar_select.cpp
+)
+
+add_dependencies(lidar_select 
+${PROJECT_NAME}_gencfg)
+
+target_link_libraries(lidar_select
+  ${catkin_LIBRARIES}
+)
 
 #############
 ## Install ##
