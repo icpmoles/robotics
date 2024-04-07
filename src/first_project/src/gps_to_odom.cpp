@@ -5,17 +5,37 @@
 #include <nav_msgs/Odometry.h>
 #include <sensor_msgs/NavSatFix.h>
 #include <sstream>
-#define A_EQRAD 6378137
-#define B_POLRAD 6356752.314
-#define E_SQUARED 0.00669437999014
 // taken from https://en.wikipedia.org/wiki/Latitude#The_geometry_of_the_ellipsoid
 
+#define A_EQRAD 6378137
+#define B_POLRAD 6356752.31425
+#define E_SQUARED 0.00669437999014
+
+// from https://docs.ros.org/en/melodic/api/inertial_sense/html/ISEarth_8c_source.html
+#define POWA2   40680631590769.000      // = pow(6378137.0,2)
+#define POWB2   40408299984661.453      // = pow(6356752.31424518,2)
+#define POWA2_F 40680631590769.000f     // = pow(6378137.0,2)
+#define POWB2_F 40408299984661.453f     // = pow(6356752.31424518,2)
+#define ONE_MINUS_F 0.996647189335253 // (1 - f), where f = 1.0 / 298.257223563 is Earth flattening
+#define E_SQ  0.006694379990141 // e2 = 1 - (1-f)*(1-f) - square of first eccentricity
+#define REQ 6378137.0         // Re - Equatorial radius, m
+#define REP 6356752.314245179 // Rp - Polar radius, m
+#define E2xREQ 42697.67270717795 // e2 * Re
+#define E2xREQdivIFE 42841.31151331153 // e2 * Re / (1 -f)
+#define GEQ 9.7803253359        // Equatorial gravity
+#define K_GRAV 0.00193185265241 // defined gravity constants
+#define K3_GRAV 3.0877e-6       // 
+#define K4_GRAV 4.0e-9          //
+#define K5_GRAV 7.2e-14         //
+ 
+
+
 struct ECEF {
-  float X, Y, Z;
+    double X, Y, Z;
 };
 
 struct NED{
-    float N, E, D;
+    double N, E, D;
 };
 
 float prime_vertical(float lat ){
@@ -26,22 +46,49 @@ float prime_vertical(float lat ){
 }
 
 // https://onlinelibrary.wiley.com/doi/pdf/10.1002/9780470099728.app3 C.80 -> C.82
+// ECEF coordinates plus latitude and longitude (in float) of the "landmark reference" as float, and the new position in ECEF
 NED ECEFtoNED(ECEF datum, float lat, float lon, ECEF position){ 
     float deltaX=position.X-datum.X;
     float deltaY=position.Y-datum.Y;
     float deltaZ=position.Z-datum.Z;
 
     NED temp;
-    temp.N = -cos(lat)*sin(lon)*deltaX + 
-            (-sin(lat)*sin(lon))*deltaY +
-            cos(lon)*deltaZ;
-    temp.E = -sin(lat)*deltaX + 
-            cos(lon)*deltaY;
-    temp.D = -cos(lat)*cos(lon)*deltaX + 
-            (-sin(lat)*cos(lon))*deltaY +
-            (-sin(lon))*deltaZ; 
+    temp.N =-cos(lon)* sin(lat)  *deltaX  
+            -sin(lon)* sin(lat)  *deltaY 
+                    +  cos(lat) *deltaZ;
+    temp.E =   -sin(lon)*deltaX + 
+                cos(lon)*deltaY;
+    temp.D = -cos(lon)*cos(lat)*deltaX + 
+            (-sin(lon)*cos(lat))*deltaY +
+                    (-sin(lat))*deltaZ; 
     return temp;           
 }
+
+ ECEF llaToECEF(float lat, float lon, float alt ) // (const double *LLA, double *Pe)
+ { // from https://docs.ros.org/en/melodic/api/inertial_sense/html/ISEarth_8c_source.html
+     //double e = 0.08181919084262;  // Earth first eccentricity: e = sqrt((R^2-b^2)/R^2);
+     double Rn, Smu, Cmu, Sl, Cl;
+ 
+     /* Earth equatorial and polar radii 
+       (from flattening, f = 1/298.257223563; */
+     // R = 6378137; // m
+     // Earth polar radius b = R * (1-f)
+     // b = 6356752.31424518;
+ 
+     Smu = sin(lat);
+     Cmu = cos(lon);
+     Sl  = sin(alt);
+     Cl  = cos(lon);
+     ECEF conv;
+    
+     // Radius of curvature at a surface point:
+     Rn = REQ / sqrt(1.0 - E_SQ * Smu * Smu);
+ 
+    conv.X=(Rn + alt) * Cmu * Cl;
+    conv.Y=(Rn + alt) * Cmu * Sl;
+    conv.Z=(Rn * POWB2 / POWA2 + alt) * Smu;
+    return conv;
+ }
 
 ECEF gpsToECEF(float lat, float lon, float alt){
     float pv = prime_vertical(lat);
@@ -64,26 +111,38 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
                     ros::Publisher ph,
                     ECEF *initFix)
 {
+
+    bool floatinsteadofdouble=1;
     //print out the received lat
     // ROS_INFO("Latitude: [%f]", msg->latitude); 
     float lat = msg->latitude;
     float lon = msg->longitude;
     float alt = msg->altitude;
-
+    ECEF newPos;
     // gps to ECEF
-    ECEF newPos = gpsToECEF(lat, lon, alt);
+    if (floatinsteadofdouble){
+        newPos = gpsToECEF(lat, lon, alt);
+    }
+    else
+    {   
+        newPos = llaToECEF(lat, lon, alt);
+    }
+
+    
     if (*toInit==true) {
         ROS_INFO("Initializing Datum");
         nh.setParam("/lat_zero", lat);
         nh.setParam("/lon_zero", lon);
         nh.setParam("/alt_zero", alt);
-        *initFix = gpsToECEF(lat, lon, alt);
+        if (floatinsteadofdouble){ *initFix = gpsToECEF(lat, lon, alt); }
+        else {*initFix = llaToECEF(lat, lon, alt); }
         *toInit = false;
     } else {
-        // ROS_INFO("Init X: [%f]", initFix->X); 
-        // ROS_INFO("DeltaX: [%f]", newPos.X-(initFix->X)); 
-        // ROS_INFO("DeltaY: [%f]", newPos.Y-(initFix->Y)); 
-        // ROS_INFO("DeltaZ: [%f]", newPos.Z-(initFix->Z)); 
+        ROS_INFO("\nDelta in ECEF");
+        ROS_INFO("Init X: [%f]", initFix->X); 
+        ROS_INFO("DeltaX: [%f]", newPos.X-(initFix->X)); 
+        ROS_INFO("DeltaY: [%f]", newPos.Y-(initFix->Y)); 
+        ROS_INFO("DeltaZ: [%f]", newPos.Z-(initFix->Z)); 
     }
 
     nav_msgs::Odometry data;
@@ -97,6 +156,7 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     data.pose.pose.position.x=deltaNED.N;
     data.pose.pose.position.y=deltaNED.E;
     data.pose.pose.position.z=deltaNED.D;
+    ROS_INFO("NED coordinates"); 
     ROS_INFO("DeltaN: [%f]", deltaNED.N); 
     ROS_INFO("DeltaE: [%f]", deltaNED.E); 
     ROS_INFO("DeltaD: [%f]", deltaNED.D);

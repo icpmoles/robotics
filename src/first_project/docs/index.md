@@ -33,3 +33,7 @@ gpstf-->3rdnode;
 rqt{{Dynamic\nSelector}}-.-o3rdnode;
 3rdnode==>Rviz
 ```
+
+In theory the NED should have |N|<90m and |E|<60m
+
+![overlay of GPS track and satellite photo](map_estimate.png)
