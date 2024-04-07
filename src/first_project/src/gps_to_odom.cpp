@@ -19,6 +19,7 @@ struct ECEF {
 struct NED{
     double N = 0, E = 0, D = 0;
     ros::Time timestamp ;
+    double Y = 0; //yaw, maybe useful for angular speed 
 };
 
 double prime_vertical(double lat ){
@@ -103,7 +104,7 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     // ECEF to NED
     NED actualNED = ECEFtoNED(*initFix,lat,lon,newPos); // NED at t
     actualNED.timestamp=msg->header.stamp; // the NED positione was "acquired" at the same time of the Fix
-
+    
     data.pose.pose.position.x=actualNED.N;
     data.pose.pose.position.y=actualNED.E;
     data.pose.pose.position.z=actualNED.D;
@@ -111,6 +112,8 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     //calculate heading
     double delta_space=0; //distance between two fixes
     double yaw_est = 0; // yaw of vehicle fixed to E axis, positive ccw
+    double prevYaw;
+    double yaw_deriv = 0; //velocity of rotation in the yaw axis, just for curiosity
     double delta_N=0; // difference in 2d NED place
     double delta_E=0;
     ros::Duration delta_T(0.5);
@@ -124,12 +127,17 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
             //in case the delta_T is too crazy (eg reset of bag or startup) let's give an arbitrary value
             delta_T = actualNED.timestamp - prevPo->timestamp;
         }
+
         diff_t = delta_T.toSec();
         delta_N = actualNED.N - prevPo->N;
         delta_E = actualNED.E - prevPo->E;
         delta_space = sqrt( pow(delta_N,2) + pow(delta_E,2) );
         vel = delta_space/diff_t;
+
+
         yaw_est = atan2(delta_N,delta_E);
+        actualNED.Y = yaw_est;
+        yaw_deriv= (yaw_est - prevPo->Y)/diff_t;
         q.setRPY( 0, 0, yaw_est);
     } // otherwise we simply update 
 
@@ -141,7 +149,7 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     data.pose.pose.orientation.z = q.getZ();
 
     data.twist.twist.linear.x=vel;
-
+    data.twist.twist.angular.z=yaw_deriv;
    
 
     if (logging){
@@ -208,18 +216,9 @@ int main(int argc, char **argv){
 
 	ros::Rate loop_rate(60); 
 
-   
-
-  
   	while (ros::ok()){
-	    
-
         ros::spinOnce();
-
-        loop_rate.sleep();
-    		
+        loop_rate.sleep();	
   	}
-
-
   	return 0;
 }
