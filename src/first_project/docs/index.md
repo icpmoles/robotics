@@ -1,8 +1,9 @@
 ## cmds
 
 ```bash
-rosbag play -l src/bags/robotics.bag
+rosbag play -l src/bags/robotics.bag -r 10
 rosrun first_project first_node
+rosrun plotjuggler plotjuggler
 ```
 
 ## First Node
