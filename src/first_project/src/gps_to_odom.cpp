@@ -110,15 +110,18 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     
     //calculate heading
     double delta_space=0; //distance between two fixes
-    double yaw = 0; // yaw of vehicle fixed to E axis, positive ccw
+    double yaw_est = 0; // yaw of vehicle fixed to E axis, positive ccw
     double delta_N=0; // difference in 2d NED place
     double delta_E=0;
     ros::Duration delta_T(0.5);
     double diff_t;
     double vel;
+    tf::Quaternion q; 
+    
     if (msg->header.seq>1)
     {
-        if ( (actualNED.timestamp - prevPo->timestamp).toSec() < 10 ){ //in case the delta_T is too crazy (eg reset of bag or startup) let's give an arbitrary value
+        if ( (actualNED.timestamp - prevPo->timestamp).toSec() < 10 ){ 
+            //in case the delta_T is too crazy (eg reset of bag or startup) let's give an arbitrary value
             delta_T = actualNED.timestamp - prevPo->timestamp;
         }
         diff_t = delta_T.toSec();
@@ -126,16 +129,24 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
         delta_E = actualNED.E - prevPo->E;
         delta_space = sqrt( pow(delta_N,2) + pow(delta_E,2) );
         vel = delta_space/diff_t;
+        yaw_est = atan2(delta_N,delta_E);
+        q.setRPY( 0, 0, yaw_est);
     } // otherwise we simply update 
 
     *prevPo = actualNED;
     
+    data.pose.pose.orientation.w = q.getW();
+    data.pose.pose.orientation.x = q.getX();
+    data.pose.pose.orientation.y = q.getY();
+    data.pose.pose.orientation.z = q.getZ();
 
     data.twist.twist.linear.x=vel;
-    data.twist.twist.linear.y=diff_t;
-    // ROS_INFO("DeltaT is %f", diff_t);
+
+   
 
     if (logging){
+    data.twist.twist.linear.y=diff_t;
+     ROS_INFO("DeltaT is %f", diff_t);    
     // for debugging we put some ECEF in the odometry topic
     data.pose.pose.orientation.x=newPos.X;
     data.pose.pose.orientation.y=newPos.Y;
