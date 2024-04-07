@@ -1,5 +1,6 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
+#include "std_msgs/Header.h"
 #include <geometry_msgs/TransformStamped.h>
 #include <tf/transform_broadcaster.h>
 #include <nav_msgs/Odometry.h>
@@ -16,7 +17,8 @@ struct ECEF {
 };
 
 struct NED{
-    double N, E, D;
+    double N = 0, E = 0, D = 0;
+    ros::Time timestamp ;
 };
 
 double prime_vertical(double lat ){
@@ -64,7 +66,8 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
                     bool *toInit, 
                     ros::NodeHandle nh, 
                     ros::Publisher ph,
-                    ECEF *initFix)
+                    ECEF *initFix,
+                    NED *prevPo)
 {
     bool logging = false;
     //print out the received lat
@@ -74,7 +77,8 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     double lon = msg->longitude*PI/180;
     double alt = msg->altitude *PI/180;
     // gps to ECEF
-    ECEF newPos = gpsToECEF(lat, lon, alt);;
+    ECEF newPos = gpsToECEF(lat, lon, alt);
+    
     
     if (*toInit==true) {
         ROS_INFO("Initializing Datum");
@@ -97,13 +101,41 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     data.header.frame_id= "gps2odom_stamp";
     data.child_frame_id = "gps_transceiver";
     // ECEF to NED
-    NED deltaNED = ECEFtoNED(*initFix,lat,lon,newPos);
+    NED actualNED = ECEFtoNED(*initFix,lat,lon,newPos); // NED at t
+    actualNED.timestamp=msg->header.stamp; // the NED positione was "acquired" at the same time of the Fix
 
-    data.pose.pose.position.x=deltaNED.N;
-    data.pose.pose.position.y=deltaNED.E;
-    data.pose.pose.position.z=deltaNED.D;
+    data.pose.pose.position.x=actualNED.N;
+    data.pose.pose.position.y=actualNED.E;
+    data.pose.pose.position.z=actualNED.D;
     
-     if (logging){
+    //calculate heading
+    double delta_space=0; //distance between two fixes
+    double yaw = 0; // yaw of vehicle fixed to E axis, positive ccw
+    double delta_N=0; // difference in 2d NED place
+    double delta_E=0;
+    ros::Duration delta_T(0.5);
+    double diff_t;
+    double vel;
+    if (msg->header.seq>1)
+    {
+        if ( (actualNED.timestamp - prevPo->timestamp).toSec() < 10 ){ //in case the delta_T is too crazy (eg reset of bag or startup) let's give an arbitrary value
+            delta_T = actualNED.timestamp - prevPo->timestamp;
+        }
+        diff_t = delta_T.toSec();
+        delta_N = actualNED.N - prevPo->N;
+        delta_E = actualNED.E - prevPo->E;
+        delta_space = sqrt( pow(delta_N,2) + pow(delta_E,2) );
+        vel = delta_space/diff_t;
+    } // otherwise we simply update 
+
+    *prevPo = actualNED;
+    
+
+    data.twist.twist.linear.x=vel;
+    data.twist.twist.linear.y=diff_t;
+    // ROS_INFO("DeltaT is %f", diff_t);
+
+    if (logging){
     // for debugging we put some ECEF in the odometry topic
     data.pose.pose.orientation.x=newPos.X;
     data.pose.pose.orientation.y=newPos.Y;
@@ -118,10 +150,9 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     data.twist.twist.angular.z=initFix->Z;
 
     ROS_INFO("NED coordinates"); 
-    ROS_INFO("DeltaN: [%f]", deltaNED.N); 
-    ROS_INFO("DeltaE: [%f]", deltaNED.E); 
-    ROS_INFO("DeltaD: [%f]", deltaNED.D);
-
+    ROS_INFO("DeltaN: [%f]", actualNED.N); 
+    ROS_INFO("DeltaE: [%f]", actualNED.E); 
+    ROS_INFO("DeltaD: [%f]", actualNED.D);
     }
     
 
@@ -147,19 +178,21 @@ int main(int argc, char **argv){
         datum_latitide=datum_latitide*PI/180;
         datum_longitude=datum_longitude*PI/180;
         datum_altitude=datum_altitude*PI/180;
-        initialECEF= gpsToECEF (datum_latitide,datum_longitude,datum_altitude);
+        initialECEF = gpsToECEF (datum_latitide,datum_longitude,datum_altitude);
     } else {
         // otherwise we listen to the GPS data and acquire it
         datumToInit = true;
         ROS_INFO("Initial datum is going to be aquired by GPS data"); 
     }
 
-    
+    // starting NED position, it's going to be updated through the execution
+    NED prevPoistion;
+
     ros::Publisher odom_pub = nh.advertise<nav_msgs::Odometry>("gps_odom", 5);
     // subscribe to gps data
     // ros::Subscriber gps_sub = nh.subscribe("fix", 1, gpsCallback);
     // the callback functions also gets the bool if it's supposed to set the datum or not
-    ros::Subscriber gps_sub = nh.subscribe<sensor_msgs::NavSatFix> ("fix", 3, boost::bind(gpsCallback, _1, &datumToInit, nh, odom_pub,&initialECEF));
+    ros::Subscriber gps_sub = nh.subscribe<sensor_msgs::NavSatFix> ("fix", 3, boost::bind(gpsCallback, _1, &datumToInit, nh, odom_pub,&initialECEF, &prevPoistion));
     // datumToInit=false; //we assume that the callback is going to do its job somehow
 
 	ros::Rate loop_rate(60); 
