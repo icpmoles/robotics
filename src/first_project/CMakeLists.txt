@@ -139,23 +139,23 @@ include_directories(
 ## First Node ##
 #################
 add_executable(
-  first_node src/gps_to_odom.cpp
+  gps_to_odom src/gps_to_odom.cpp
 )
 
-target_link_libraries(first_node
+target_link_libraries( gps_to_odom
   ${catkin_LIBRARIES}
 )
 
-################
-## Second Node ##
-################
-# add_executable(
-#   second_node src/odom_to_tf.cpp
-# )
+###############
+# Second Node ##
+###############
+add_executable(
+  odom_to_tf src/odom_to_tf.cpp
+)
 
-# target_link_libraries(second_node
-#   ${catkin_LIBRARIES}
-# )
+target_link_libraries(odom_to_tf
+  ${catkin_LIBRARIES}
+)
 
 ################
 ## Third Node ##

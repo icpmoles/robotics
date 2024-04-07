@@ -99,7 +99,7 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
 
     nav_msgs::Odometry data;
     data.header=msg->header;
-    data.header.frame_id= "gps2odom_stamp";
+    data.header.frame_id= "gps_ref_frame";
     data.child_frame_id = "gps_transceiver";
     // ECEF to NED
     NED actualNED = ECEFtoNED(*initFix,lat,lon,newPos); // NED at t
