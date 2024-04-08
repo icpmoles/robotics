@@ -48,6 +48,8 @@ NED ECEFtoNED(ECEF datum, double lat, double lon, ECEF position){
     return temp;           
 }
 
+
+// LLA in radians please
 ECEF gpsToECEF(double lat, double lon, double alt){
     double pv = prime_vertical(lat);
     double common = (pv + alt)*cos(lat);
@@ -83,9 +85,9 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     
     if (*toInit==true) {
         ROS_INFO("Initializing Datum");
-        nh.setParam("/lat_zero", lat);
-        nh.setParam("/lon_zero", lon);
-        nh.setParam("/alt_zero", alt);
+        nh.setParam("/lat_zero", msg->latitude);
+        nh.setParam("/lon_zero", msg->longitude);
+        nh.setParam("/alt_zero", msg->altitude);
         *initFix = gpsToECEF(lat, lon, alt);
         *toInit = false;
     } else {
@@ -99,7 +101,7 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
 
     nav_msgs::Odometry data;
     data.header=msg->header;
-    data.header.frame_id= "gps_ref_frame";
+    data.header.frame_id= "world";
     data.child_frame_id = "gps_transceiver";
     // ECEF to NED
     NED actualNED = ECEFtoNED(*initFix,lat,lon,newPos); // NED at t
@@ -134,8 +136,14 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
         delta_space = sqrt( pow(delta_N,2) + pow(delta_E,2) );
         vel = delta_space/diff_t;
 
-
-        yaw_est = atan2(delta_N,delta_E);
+        // if we don't move much in the refresh window it's hard to estimate the heading becuase of the uncertinty of the GPS, 
+        // so we just use the previous heading and stick with it
+        if (delta_space>0.04){
+            yaw_est = atan2(delta_N,delta_E);
+        }
+        else{
+            yaw_est = prevPo->Y;
+        }
         actualNED.Y = yaw_est;
         yaw_deriv= (yaw_est - prevPo->Y)/diff_t;
         q.setRPY( 0, 0, yaw_est);

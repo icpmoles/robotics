@@ -157,20 +157,20 @@ target_link_libraries(odom_to_tf
   ${catkin_LIBRARIES}
 )
 
-################
-## Third Node ##
-################
+###############
+# Third Node ##
+###############
 
-# add_executable(
-#   third_node src/lidar_select.cpp
-# )
+add_executable(
+  lidar_select src/lidar_select.cpp
+)
 
-# add_dependencies(third_node 
+# add_dependencies(lidar_select 
 # ${PROJECT_NAME}_gencfg)
 
-# target_link_libraries(third_node
-#   ${catkin_LIBRARIES}
-# )
+target_link_libraries(lidar_select
+  ${catkin_LIBRARIES}
+)
 
 #############
 ## Install ##

@@ -16,4 +16,6 @@
   <param name="child_frame" value="odom" />
 </node>
 
+<node pkg="first_project" name="lidar_select" type="lidar_select" ></node>
+
 </launch>
