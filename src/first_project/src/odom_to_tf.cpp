@@ -10,21 +10,21 @@ void poseCallback(
     const nav_msgs::Odometry::ConstPtr& msg,
     std::string rf, std::string cf ){
 
-  static tf::TransformBroadcaster br;
-  tf::Transform transform;
-
-  geometry_msgs::Point cart_position =  msg->pose.pose.position;
-  geometry_msgs::Quaternion cart_heading  = msg->pose.pose.orientation;
-  transform.setOrigin( tf::Vector3(cart_position.x, cart_position.y, 0.0) );
-  tf::Quaternion q;
-  q.setW(cart_heading.w);
-  q.setX(cart_heading.x);
-  q.setY(cart_heading.y);
-  q.setZ(cart_heading.z);
-  q.normalize();
-  transform.setRotation(q);
+    static tf::TransformBroadcaster br;
+    tf::Transform transform;
   
-  br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), rf, cf));
+    geometry_msgs::Point cart_position =  msg->pose.pose.position;
+    geometry_msgs::Quaternion cart_heading  = msg->pose.pose.orientation;
+    transform.setOrigin( tf::Vector3(cart_position.x, cart_position.y, 0.0) );
+    tf::Quaternion q;
+    q.setW(cart_heading.w);
+    q.setX(cart_heading.x);
+    q.setY(cart_heading.y);
+    q.setZ(cart_heading.z);
+    // q.normalize();
+    transform.setRotation(q);
+
+    br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), rf, cf));
 }
 
 int main(int argc, char** argv){

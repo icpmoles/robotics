@@ -2,7 +2,9 @@
  <!-- <node pkg="rosbag" type="play" name="player" output="screen" args=" -l src/bags/robotics.bag -r 10"/> -->
  <param name="name" value="first" />
  
- <node pkg="first_project" name="first_node" type="gps_to_odom"></node>
+
+
+ <node pkg="first_project" name="first_node" type="gps_to_odom" output="screen"></node>
 
 <node pkg="first_project" name="gps_o2t" type="odom_to_tf" args="gps_odom">
   <param name="input_odom" value="gps_odom" />

@@ -10,7 +10,7 @@ void filterCallBack(
     ros::Publisher pb){
         // copy packet and override header
         sensor_msgs::LaserScan newLS=*msg;
-        newLS.header.frame_id = "gps_odom";
+        newLS.header.frame_id = "odom";
         newLS.header.stamp = ros::Time::now();
         pb.publish(newLS);
 

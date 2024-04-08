@@ -9,6 +9,8 @@ Panels:
         - /TF1
         - /TF1/Frames1
         - /TF1/Tree1
+        - /Odometry1
+        - /Odometry1/Shape1
       Splitter Ratio: 0.5
     Tree Height: 696
   - Class: rviz/Selection
@@ -109,6 +111,41 @@ Visualization Manager:
             {}
       Update Interval: 0
       Value: true
+    - Angle Tolerance: 0.10000000149011612
+      Class: rviz/Odometry
+      Covariance:
+        Orientation:
+          Alpha: 0.5
+          Color: 255; 255; 127
+          Color Style: Unique
+          Frame: Local
+          Offset: 1
+          Scale: 1
+          Value: true
+        Position:
+          Alpha: 0.30000001192092896
+          Color: 204; 51; 204
+          Scale: 1
+          Value: true
+        Value: true
+      Enabled: true
+      Keep: 100
+      Name: Odometry
+      Position Tolerance: 0.10000000149011612
+      Queue Size: 80
+      Shape:
+        Alpha: 1
+        Axes Length: 1
+        Axes Radius: 0.10000000149011612
+        Color: 255; 25; 0
+        Head Length: 0.30000001192092896
+        Head Radius: 0.10000000149011612
+        Shaft Length: 10
+        Shaft Radius: 0.5
+        Value: Arrow
+      Topic: /gps_odom
+      Unreliable: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -146,10 +183,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Scale: 7.663332462310791
+      Scale: 10
       Target Frame: <Fixed Frame>
-      X: 36.727962493896484
-      Y: -2.984503984451294
+      X: 0
+      Y: 0
     Saved: ~
 Window Geometry:
   Displays:
@@ -167,5 +204,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1908
-  X: 0
-  Y: 0
+  X: -37
+  Y: -44
