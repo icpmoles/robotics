@@ -1,10 +1,12 @@
 <launch>
  <!-- <node pkg="rosbag" type="play" name="player" output="screen" args=" -l src/bags/robotics.bag -r 10"/> -->
- <param name="name" value="first" />
- 
+ <!-- <node pkg="rosbag" type="play" name="$(anon rosbag)" output="screen" args=" -l /src/bags/robotics.bag" required="true"></node> -->
 
+ <param name="alt_zero" value="169.04000000000002" />
+ <param name="lat_zero" value="45.47766945833333" />
+ <param name="lon_zero" value="9.226740196666666" />
 
- <node pkg="first_project" name="first_node" type="gps_to_odom" output="screen"></node>
+ <node pkg="first_project" name="first_node" type="gps_to_odom" ></node>
 
 <node pkg="first_project" name="gps_o2t" type="odom_to_tf" args="gps_odom">
   <param name="input_odom" value="gps_odom" />
@@ -19,5 +21,7 @@
 </node>
 
 <node pkg="first_project" name="lidar_select" type="lidar_select" ></node>
+
+<node type="rviz" name="rviz" pkg="rviz" args="-d  /robotics/src/first_project/lidar.rviz" ></node> 
 
 </launch>
