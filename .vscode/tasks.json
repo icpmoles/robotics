@@ -2,6 +2,20 @@
 	"version":"2.0.0",
 	"tasks":[
 		{
+			"label": "build ROS nodes",
+			"type": "shell",
+			"command": "catkin_make",
+			"group": "test",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			},
+			"problemMatcher": [],
+			"runOptions": {
+				"instanceLimit": 1
+			}
+		},
+		{
 			"label": "build ROS code and launch",
 			"type": "shell",
 			"command": "catkin_make && roslaunch first_project launch.launch",

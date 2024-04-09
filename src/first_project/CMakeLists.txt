@@ -89,9 +89,10 @@ find_package(catkin REQUIRED COMPONENTS
 ##     and list every .cfg file to be processed
 
 # ## Generate dynamic reconfigure parameters in the 'cfg' folder
-# generate_dynamic_reconfigure_options(
-#   cfg/lidar_params.cfg
-# )
+generate_dynamic_reconfigure_options(
+  cfg/lidarparameters.cfg
+  #...
+)
 
 ###################################
 ## catkin specific configuration ##
@@ -161,12 +162,12 @@ target_link_libraries(odom_to_tf
 # Third Node ##
 ###############
 
+
 add_executable(
   lidar_select src/lidar_select.cpp
 )
 
-# add_dependencies(lidar_select 
-# ${PROJECT_NAME}_gencfg)
+add_dependencies(lidar_select ${PROJECT_NAME}_gencfg)
 
 target_link_libraries(lidar_select
   ${catkin_LIBRARIES}

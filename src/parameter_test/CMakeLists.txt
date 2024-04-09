@@ -5,10 +5,10 @@ project(parameter_test)
 find_package(catkin REQUIRED COMPONENTS roscpp std_msgs dynamic_reconfigure)
 
 
-# when compiling we provide a cfg file
-generate_dynamic_reconfigure_options(
-  cfg/parameters.cfg
-)
+# # when compiling we provide a cfg file
+# generate_dynamic_reconfigure_options(
+#   cfg/parameters.cfg
+# )
 
 
 
@@ -22,9 +22,9 @@ add_executable(param_first src/param_first.cpp)
 target_link_libraries(param_first ${catkin_LIBRARIES})
 
 
-add_executable(param_second src/param_second.cpp)
-add_dependencies(param_second ${PROJECT_NAME}_gencfg)
-target_link_libraries(param_second ${catkin_LIBRARIES})
+# add_executable(param_second src/param_second.cpp)
+# add_dependencies(param_second ${PROJECT_NAME}_gencfg)
+# target_link_libraries(param_second ${catkin_LIBRARIES})
 
 
 

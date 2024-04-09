@@ -1,16 +1,28 @@
 #include <ros/ros.h>
 #include <dynamic_reconfigure/server.h>
-// #include <parameter_test/parametersConfig.h>
 #include <sensor_msgs/LaserScan.h>
+#include <first_project/parametersConfig.h>
+#include <sstream>
 
+std::string TFframe = "gps_odom";
 
+void paramCallback(first_project::parametersConfig &config, uint32_t level) {
+
+  if (config.bool_param)
+      TFframe = "gps_odom";
+  else 
+      TFframe = "odom";
+ 
+  ROS_INFO("Reconfigure Request:%s", 
+            config.bool_param?"True":"False");
+}
 
 void filterCallBack(
     const sensor_msgs::LaserScan::ConstPtr& msg,
     ros::Publisher pb){
         // copy packet and override header
         sensor_msgs::LaserScan newLS=*msg;
-        newLS.header.frame_id = "gps_odom";
+        newLS.header.frame_id = TFframe;
         newLS.header.stamp = ros::Time::now();
         pb.publish(newLS);
 
@@ -23,9 +35,16 @@ int main(int argc, char** argv){
   ros::NodeHandle nh;
 
   // we get the parameters of the topic to subscribe to
-    ros::NodeHandle nh_private("~"); // this is a private node handle
-    std::string root_f, child_f;
-    ros::Publisher laser_pub = nh.advertise<sensor_msgs::LaserScan>("/laser", 5);
+  ros::NodeHandle nh_private("~"); // this is a private node handle
+  std::string root_f, child_f;
+  ros::Publisher laser_pub = nh.advertise<sensor_msgs::LaserScan>("/laser", 5);
+  // dyn conf handles
+  dynamic_reconfigure::Server<first_project::parametersConfig> server;
+  dynamic_reconfigure::Server<first_project::parametersConfig>::CallbackType f;
+
+  f = boost::bind(&paramCallback, _1, _2);
+  server.setCallback(f);
+
 
   ros::Subscriber sub = nh.subscribe<sensor_msgs::LaserScan>("scan", 10,boost::bind(filterCallBack, _1, laser_pub));
   

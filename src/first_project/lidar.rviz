@@ -7,6 +7,7 @@ Panels:
         - /Global Options1
         - /Status1
         - /LaserScan1
+        - /TF1
         - /TF1/Frames1
         - /TF1/Tree1
       Splitter Ratio: 0.5
@@ -89,11 +90,11 @@ Visualization Manager:
       Filter (whitelist): ""
       Frame Timeout: 15
       Frames:
-        All Enabled: false
+        All Enabled: true
         gps_odom:
           Value: true
         odom:
-          Value: false
+          Value: true
         world:
           Value: true
       Marker Alpha: 1
@@ -137,7 +138,7 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Angle: -0.030000071972608566
+      Angle: 0
       Class: rviz/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
@@ -147,10 +148,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Scale: 6.460371017456055
+      Scale: 3.529470682144165
       Target Frame: <Fixed Frame>
-      X: -5.040502548217773
-      Y: -13.220514297485352
+      X: 0
+      Y: 0
     Saved:
       - Angle: -3.884999990463257
         Class: rviz/TopDownOrtho
