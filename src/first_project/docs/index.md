@@ -5,6 +5,9 @@ rosbag play -l src/bags/robotics.bag -r 10
 rosrun first_project gps_to_odom
 rosrun plotjuggler plotjuggler
 roslaunch first_project launch.launch
+
+
+catkin_make && roslaunch first_project launch.launch
 ```
 
 ## First Node

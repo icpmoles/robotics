@@ -12,12 +12,12 @@
 #define A_EQRAD 6378137
 #define B_POLRAD 6356752.31425
 #define E_SQUARED 0.00669437999014
-#define MA_SIZE 20
+#define MA_SIZE 10
 
 
 std::deque<double> N_queue(MA_SIZE, 0.0);
 std::deque<double> E_queue(MA_SIZE, 0.0);
-
+double heading_zero;
 
 // https://en.wikipedia.org/wiki/Circular_mean
 double MovingAverage( std::deque<double> const &q){
@@ -83,6 +83,9 @@ ECEF gpsToECEF(double lat, double lon, double alt){
     return conv;
 }
 
+
+bool initialHeadingEstimated = false;
+
 void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg, 
                     bool *toInit, 
                     ros::NodeHandle nh, 
@@ -125,7 +128,9 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     NED actualNED = ECEFtoNED(*initFix,lat,lon,newPos); // NED at t
     actualNED.timestamp=msg->header.stamp; // the NED positione was "acquired" at the same time of the Fix
     
-    data.pose.pose.position.x=actualNED.N;
+
+    // NED to XYZ ??????
+    data.pose.pose.position.x=actualNED.N; 
     data.pose.pose.position.y=actualNED.E;
     data.pose.pose.position.z=actualNED.D;
     
@@ -133,7 +138,7 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     double delta_space=0; //distance between two fixes
     double yaw_est = 0; // yaw of vehicle fixed to E axis, positive ccw
     double yaw_est_simple = 0;
-    double prevYaw;
+    double prevYaw = 0;
     double yaw_deriv = 0; //velocity of rotation in the yaw axis, just for curiosity
     double delta_N=0; // difference in 2d NED place
     double delta_E=0;
@@ -142,7 +147,15 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     double vel;
     tf::Quaternion q; 
     
-    if (msg->header.seq>1)
+    // if we don't have an initial heading estimation and we just got out
+    // from a circle of radius 0.2m (already squared to skip the sqrt for the cartesian norm)
+    // 
+    if ( (!initialHeadingEstimated) && (actualNED.N*actualNED.N + actualNED.E*actualNED.E > 0.09) ) { 
+        initialHeadingEstimated = true;
+        heading_zero = atan2(actualNED.N,actualNED.E);
+    }
+
+    if (msg->header.seq>1)  // for a bug that i forgot about
     {
         if ( (actualNED.timestamp - prevPo->timestamp).toSec() < 5 ){ 
             //in case the delta_T is too crazy (eg reset of bag or startup) let's give an arbitrary value
@@ -165,12 +178,12 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
             N_queue.push_back(delta_N);
             E_queue.push_back(delta_E);
             // calculate MovingAverage
-            yaw_est = atan2( MovingAverage(N_queue), MovingAverage(E_queue));
+            yaw_est = atan2( MovingAverage(N_queue), MovingAverage(E_queue)) ; // - heading_zero;
             // pop old values
             N_queue.pop_front();
             E_queue.pop_front();
             }
-            yaw_est_simple = atan2(delta_N,delta_E);
+            yaw_est_simple = atan2(delta_N,delta_E); // - heading_zero;
         }
         else if (msg->header.seq>100 ){ // if we are not at the start we can use this trick otherwise it makes up angles
             yaw_est = prevPo->Y;
@@ -190,7 +203,7 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
 
     data.twist.twist.linear.x=vel;
     data.twist.twist.angular.z=yaw_deriv;
-    data.twist.twist.angular.y=yaw_est_simple; // for debugging
+    data.twist.twist.angular.y=heading_zero ; //yaw_est_simple; // for debugging ; 
    
 
     if (logging){

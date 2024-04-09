@@ -7,25 +7,25 @@
      <DockSplitter count="2" orientation="|" sizes="0.5;0.5">
       <DockSplitter count="2" orientation="-" sizes="0.500578;0.499422">
        <DockArea name="as GPS coordinates">
-        <plot mode="XYPlot" style="Dots" flip_x="false" flip_y="false">
-         <range right="9.227099" top="45.477752" left="9.226331" bottom="45.477385"/>
+        <plot mode="XYPlot" style="Dots" flip_y="false" flip_x="false">
+         <range right="9.227500" left="9.225706" bottom="45.476982" top="45.477867"/>
          <limitY/>
-         <curve curve_x="/fix/longitude" curve_y="/fix/latitude" name="/fix/l[atitude;ongitude]" color="#17becf"/>
+         <curve curve_y="/fix/latitude" color="#17becf" curve_x="/fix/longitude" name="/fix/l[atitude;ongitude]"/>
         </plot>
        </DockArea>
        <DockArea name="Wheel Odometry">
-        <plot mode="XYPlot" style="Lines" flip_x="true" flip_y="true">
-         <range right="-14.204777" top="-21.318050" left="39.287997" bottom="3.089855"/>
+        <plot mode="XYPlot" style="Lines" flip_y="true" flip_x="true">
+         <range right="-70.536871" left="110.911985" bottom="55.263996" top="-27.528241"/>
          <limitY/>
-         <curve curve_x="/odom/pose/pose/position/x" curve_y="/odom/pose/pose/position/y" name="/odom/pose/pose/position/[x;y]" color="#ff7f0e"/>
+         <curve curve_y="/odom/pose/pose/position/y" color="#ff7f0e" curve_x="/odom/pose/pose/position/x" name="/odom/pose/pose/position/[x;y]"/>
         </plot>
        </DockArea>
       </DockSplitter>
       <DockArea name="as NE(d) coordinates">
-       <plot mode="XYPlot" style="Dots" flip_x="false" flip_y="false">
-        <range right="33.652280" top="22.685261" left="-5.266358" bottom="-18.147409"/>
+       <plot mode="XYPlot" style="Dots" flip_y="false" flip_x="false">
+        <range right="36.163881" left="-57.619852" bottom="-76.398541" top="21.997507"/>
         <limitY/>
-        <curve curve_x="/gps_odom/pose/pose/position/y" curve_y="/gps_odom/pose/pose/position/x" name="/gps_odom/pose/pose/position/[y;x]" color="#1ac938"/>
+        <curve curve_y="/gps_odom/pose/pose/position/y" color="#17becf" curve_x="/gps_odom/pose/pose/position/x" name="/gps_odom/pose/pose/position/[x;y]"/>
        </plot>
       </DockArea>
      </DockSplitter>
@@ -37,25 +37,25 @@
     <DockSplitter count="2" orientation="-" sizes="0.500578;0.499422">
      <DockSplitter count="2" orientation="|" sizes="0.5;0.5">
       <DockArea name="...">
-       <plot mode="TimeSeries" style="Lines" flip_x="false" flip_y="false">
-        <range right="76.969527" top="1.695394" left="57.069183" bottom="0.731533"/>
+       <plot mode="TimeSeries" style="Lines" flip_y="false" flip_x="false">
+        <range right="42.863416" left="2.879427" bottom="-0.045070" top="1.847874"/>
         <limitY/>
-        <curve name="/gps_odom/twist/twist/linear/x" color="#9467bd"/>
+        <curve color="#9467bd" name="/gps_odom/twist/twist/linear/x"/>
        </plot>
       </DockArea>
       <DockArea name="...">
-       <plot mode="TimeSeries" style="Lines" flip_x="false" flip_y="false">
-        <range right="76.969527" top="0.100000" left="57.069183" bottom="-0.100000"/>
+       <plot mode="TimeSeries" style="Lines" flip_y="false" flip_x="false">
+        <range right="42.863416" left="2.879427" bottom="-0.100000" top="0.100000"/>
         <limitY/>
-        <curve name="/gps_odom/twist/twist/linear/y" color="#17becf"/>
+        <curve color="#17becf" name="/gps_odom/twist/twist/linear/y"/>
        </plot>
       </DockArea>
      </DockSplitter>
      <DockArea name="...">
-      <plot mode="TimeSeries" style="Lines" flip_x="false" flip_y="false">
-       <range right="76.969527" top="0.100000" left="57.069183" bottom="-0.100000"/>
+      <plot mode="TimeSeries" style="Lines" flip_y="false" flip_x="false">
+       <range right="42.863416" left="2.879427" bottom="-0.100000" top="0.100000"/>
        <limitY/>
-       <curve name="/gps_odom/twist/twist/linear/z" color="#bcbd22"/>
+       <curve color="#bcbd22" name="/gps_odom/twist/twist/linear/z"/>
       </plot>
      </DockArea>
     </DockSplitter>
@@ -66,24 +66,24 @@
     <DockSplitter count="1" orientation="-" sizes="1">
      <DockSplitter count="3" orientation="|" sizes="0.333544;0.332912;0.333544">
       <DockArea name="...">
-       <plot mode="TimeSeries" style="Lines" flip_x="false" flip_y="false">
-        <range right="76.969527" top="0.100000" left="57.069183" bottom="-0.100000"/>
+       <plot mode="TimeSeries" style="Lines" flip_y="false" flip_x="false">
+        <range right="42.863416" left="2.879427" bottom="-0.100000" top="0.100000"/>
         <limitY/>
-        <curve name="/gps_odom/twist/twist/angular/x" color="#1f77b4"/>
+        <curve color="#1f77b4" name="/gps_odom/twist/twist/angular/x"/>
        </plot>
       </DockArea>
       <DockArea name="...">
-       <plot mode="TimeSeries" style="Lines" flip_x="false" flip_y="false">
-        <range right="76.969527" top="1.366352" left="57.069183" bottom="0.810629"/>
+       <plot mode="TimeSeries" style="Lines" flip_y="false" flip_x="false">
+        <range right="42.863416" left="2.879427" bottom="-2.381645" top="-2.181645"/>
         <limitY/>
-        <curve name="/gps_odom/twist/twist/angular/y" color="#ff7f0e"/>
+        <curve color="#ff7f0e" name="/gps_odom/twist/twist/angular/y"/>
        </plot>
       </DockArea>
       <DockArea name="...">
-       <plot mode="TimeSeries" style="Lines" flip_x="false" flip_y="false">
-        <range right="76.969527" top="0.487161" left="57.069183" bottom="-0.739268"/>
+       <plot mode="TimeSeries" style="Lines" flip_y="false" flip_x="false">
+        <range right="42.863416" left="2.879427" bottom="-33.076029" top="33.110498"/>
         <limitY/>
-        <curve name="/gps_odom/twist/twist/angular/z" color="#f14cc1"/>
+        <curve color="#f14cc1" name="/gps_odom/twist/twist/angular/z"/>
        </plot>
       </DockArea>
      </DockSplitter>
@@ -94,10 +94,10 @@
    <Container>
     <DockSplitter count="1" orientation="-" sizes="1">
      <DockArea name="...">
-      <plot mode="XYPlot" style="Lines" flip_x="false" flip_y="false">
-       <range right="0.198037" top="0.100000" left="-0.198037" bottom="-0.100000"/>
+      <plot mode="XYPlot" style="Lines" flip_y="false" flip_x="false">
+       <range right="0.198037" left="-0.198037" bottom="-0.100000" top="0.100000"/>
        <limitY/>
-       <curve curve_x="/gps_odom/pose/pose/orientation/y" curve_y="/gps_odom/pose/pose/orientation/x" name="/gps_odom/pose/pose/orientation/[y;x]" color="#17becf"/>
+       <curve curve_y="/gps_odom/pose/pose/orientation/x" color="#17becf" curve_x="/gps_odom/pose/pose/orientation/y" name="/gps_odom/pose/pose/orientation/[y;x]"/>
       </plot>
      </DockArea>
     </DockSplitter>
@@ -108,17 +108,17 @@
     <DockSplitter count="1" orientation="-" sizes="1">
      <DockSplitter count="2" orientation="|" sizes="0.5;0.5">
       <DockArea name="wheel odometry ">
-       <plot mode="TimeSeries" style="Lines" flip_x="false" flip_y="false">
-        <range right="76.962828" top="1.521700" left="56.977047" bottom="0.778300"/>
+       <plot mode="TimeSeries" style="Lines" flip_y="false" flip_x="false">
+        <range right="42.889562" left="2.891774" bottom="-0.038125" top="1.563125"/>
         <limitY/>
-        <curve name="/odom/twist/twist/linear/x" color="#9467bd"/>
+        <curve color="#9467bd" name="/odom/twist/twist/linear/x"/>
        </plot>
       </DockArea>
       <DockArea name="GPS odometry">
-       <plot mode="TimeSeries" style="Lines" flip_x="false" flip_y="false">
-        <range right="76.969527" top="1.695394" left="57.069183" bottom="0.731533"/>
+       <plot mode="TimeSeries" style="Lines" flip_y="false" flip_x="false">
+        <range right="42.863416" left="2.879427" bottom="-0.045070" top="1.847874"/>
         <limitY/>
-        <curve name="/gps_odom/twist/twist/linear/x" color="#f14cc1"/>
+        <curve color="#f14cc1" name="/gps_odom/twist/twist/linear/x"/>
        </plot>
       </DockArea>
      </DockSplitter>
@@ -129,11 +129,11 @@
    <Container>
     <DockSplitter count="1" orientation="-" sizes="1">
      <DockArea name="...">
-      <plot mode="TimeSeries" style="Lines" flip_x="false" flip_y="false">
-       <range right="76.969527" top="0.100000" left="57.069183" bottom="-0.100000"/>
+      <plot mode="TimeSeries" style="Lines" flip_y="false" flip_x="false">
+       <range right="42.863416" left="2.879427" bottom="-0.100000" top="0.100000"/>
        <limitY/>
-       <curve name="/gps_odom/twist/twist/linear/y" color="#f14cc1"/>
-       <curve name="gps_polling freq" color="#9467bd"/>
+       <curve color="#f14cc1" name="/gps_odom/twist/twist/linear/y"/>
+       <curve color="#9467bd" name="gps_polling freq"/>
       </plot>
      </DockArea>
     </DockSplitter>
@@ -144,20 +144,20 @@
     <DockSplitter count="1" orientation="-" sizes="1">
      <DockSplitter count="2" orientation="|" sizes="0.281566;0.718434">
       <DockArea name="Angular Rotation speed">
-       <plot mode="TimeSeries" style="Lines" flip_x="false" flip_y="false">
-        <range right="76.969527" top="0.487161" left="56.977047" bottom="-0.739268"/>
+       <plot mode="TimeSeries" style="Lines" flip_y="false" flip_x="false">
+        <range right="42.889562" left="2.879427" bottom="-33.076029" top="33.110498"/>
         <limitY/>
-        <curve name="/gps_odom/twist/twist/angular/z" color="#f14cc1"/>
-        <curve name="/odom/twist/twist/angular/z" color="#bcbd22"/>
+        <curve color="#f14cc1" name="/gps_odom/twist/twist/angular/z"/>
+        <curve color="#bcbd22" name="/odom/twist/twist/angular/z"/>
        </plot>
       </DockArea>
       <DockArea name="Yaw estimate from GPS vs wheel_odometry">
-       <plot mode="TimeSeries" style="Dots" flip_x="false" flip_y="false">
-        <range right="76.969527" top="3.200000" left="56.977047" bottom="-3.200000"/>
-        <limitY min="-3.2" max="3.2"/>
-        <curve name="/gps_odom/pose/pose/orientation/yaw" color="#cf1731"/>
-        <curve name="/odom/pose/pose/orientation/yaw" color="#1f77b4"/>
-        <curve name="/gps_odom/twist/twist/angular/y" color="#17becf"/>
+       <plot mode="TimeSeries" style="Dots" flip_y="false" flip_x="false">
+        <range right="42.889562" left="2.879427" bottom="-3.200000" top="3.200000"/>
+        <limitY max="3.2" min="-3.2"/>
+        <curve color="#cf1731" name="/gps_odom/pose/pose/orientation/yaw"/>
+        <curve color="#1f77b4" name="/odom/pose/pose/orientation/yaw"/>
+        <curve color="#17becf" name="/gps_odom/twist/twist/angular/y"/>
        </plot>
       </DockArea>
      </DockSplitter>
@@ -169,17 +169,17 @@
     <DockSplitter count="1" orientation="-" sizes="1">
      <DockSplitter count="2" orientation="|" sizes="0.5;0.5">
       <DockArea name="from GPS">
-       <plot mode="XYPlot" style="Lines" flip_x="false" flip_y="false">
-        <range right="22.685261" top="35.468056" left="-18.147409" bottom="-7.082134"/>
+       <plot mode="XYPlot" style="Lines" flip_y="false" flip_x="false">
+        <range right="36.163881" left="-57.619852" bottom="-76.398541" top="21.997507"/>
         <limitY/>
-        <curve curve_x="/tf/world/gps_odom/translation/x" curve_y="/tf/world/gps_odom/translation/y" name="/tf/world/gps_odom/translation/[x;y]" color="#bcbd22"/>
+        <curve curve_y="/tf/world/gps_odom/translation/y" color="#bcbd22" curve_x="/tf/world/gps_odom/translation/x" name="/tf/world/gps_odom/translation/[x;y]"/>
        </plot>
       </DockArea>
       <DockArea name="from Wheel">
-       <plot mode="XYPlot" style="Lines" flip_x="false" flip_y="false">
-        <range right="31.388132" top="10.637754" left="-6.167563" bottom="-28.764942"/>
+       <plot mode="XYPlot" style="Lines" flip_y="false" flip_x="false">
+        <range right="71.322103" left="-30.946588" bottom="-39.782004" top="67.516294"/>
         <limitY/>
-        <curve curve_x="/tf/world/odom/translation/x" curve_y="/tf/world/odom/translation/y" name="/tf/world/odom/translation/[x;y]" color="#1f77b4"/>
+        <curve curve_y="/tf/world/odom/translation/y" color="#1f77b4" curve_x="/tf/world/odom/translation/x" name="/tf/world/odom/translation/[x;y]"/>
        </plot>
       </DockArea>
      </DockSplitter>
@@ -191,23 +191,23 @@
     <DockSplitter count="1" orientation="-" sizes="1">
      <DockSplitter count="2" orientation="|" sizes="0.5;0.5">
       <DockArea name="TF quaternion gps">
-       <plot mode="TimeSeries" style="Lines" flip_x="false" flip_y="false">
-        <range right="76.969636" top="0.939258" left="57.069262" bottom="-0.022909"/>
+       <plot mode="TimeSeries" style="Lines" flip_y="false" flip_x="false">
+        <range right="42.863973" left="2.879902" bottom="-0.911164" top="1.046614"/>
         <limitY/>
-        <curve name="/tf/world/gps_odom/rotation/w" color="#17becf"/>
-        <curve name="/tf/world/gps_odom/rotation/x" color="#bcbd22"/>
-        <curve name="/tf/world/gps_odom/rotation/y" color="#1f77b4"/>
-        <curve name="/tf/world/gps_odom/rotation/z" color="#d62728"/>
+        <curve color="#17becf" name="/tf/world/gps_odom/rotation/w"/>
+        <curve color="#bcbd22" name="/tf/world/gps_odom/rotation/x"/>
+        <curve color="#1f77b4" name="/tf/world/gps_odom/rotation/y"/>
+        <curve color="#d62728" name="/tf/world/gps_odom/rotation/z"/>
        </plot>
       </DockArea>
       <DockArea name="TF quaternion wheel">
-       <plot mode="TimeSeries" style="Lines" flip_x="false" flip_y="false">
-        <range right="76.952669" top="1.023736" left="56.952671" bottom="-0.360235"/>
+       <plot mode="TimeSeries" style="Lines" flip_y="false" flip_x="false">
+        <range right="42.870749" left="2.871857" bottom="-0.898997" top="1.046317"/>
         <limitY/>
-        <curve name="/tf/world/odom/rotation/w" color="#1ac938"/>
-        <curve name="/tf/world/odom/rotation/x" color="#ff7f0e"/>
-        <curve name="/tf/world/odom/rotation/y" color="#f14cc1"/>
-        <curve name="/tf/world/odom/rotation/z" color="#9467bd"/>
+        <curve color="#1ac938" name="/tf/world/odom/rotation/w"/>
+        <curve color="#ff7f0e" name="/tf/world/odom/rotation/x"/>
+        <curve color="#f14cc1" name="/tf/world/odom/rotation/y"/>
+        <curve color="#9467bd" name="/tf/world/odom/rotation/z"/>
        </plot>
       </DockArea>
      </DockSplitter>
@@ -218,16 +218,16 @@
    <Container>
     <DockSplitter count="1" orientation="-" sizes="1">
      <DockArea name="...">
-      <plot mode="TimeSeries" style="Lines" flip_x="false" flip_y="false">
-       <range right="76.962828" top="1680266337.544394" left="56.977047" bottom="1680266295.544392"/>
+      <plot mode="TimeSeries" style="Lines" flip_y="false" flip_x="false">
+       <range right="42.889562" left="2.891774" bottom="1680266157.497894" top="1680266603.810892"/>
        <limitY/>
-       <curve name="/odom/header/header/stamp" color="#17becf"/>
+       <curve color="#17becf" name="/odom/header/header/stamp"/>
       </plot>
      </DockArea>
     </DockSplitter>
    </Container>
   </Tab>
-  <currentTabIndex index="6"/>
+  <currentTabIndex index="0"/>
  </tabbed_widget>
  <use_relative_time_offset enabled="1"/>
  <!-- - - - - - - - - - - - - - - -->

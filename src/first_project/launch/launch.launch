@@ -1,6 +1,6 @@
 <launch>
  <!-- <node pkg="rosbag" type="play" name="player" output="screen" args=" -l src/bags/robotics.bag -r 10"/> -->
- <!-- <node pkg="rosbag" type="play" name="$(anon rosbag)" output="screen" args=" -l /src/bags/robotics.bag" required="true"></node> -->
+ <node pkg="rosbag" type="play" name="loop" args=" -l /home/polimi/robotics/src/bags/robotics.bag -r 2" required="true" output="screen"></node>
 
  <param name="alt_zero" value="169.04000000000002" />
  <param name="lat_zero" value="45.47766945833333" />
@@ -22,6 +22,6 @@
 
 <node pkg="first_project" name="lidar_select" type="lidar_select" ></node>
 
-<node type="rviz" name="rviz" pkg="rviz" args="-d  /robotics/src/first_project/lidar.rviz" ></node> 
+<!-- <node type="rviz" name="rviz" pkg="rviz" args="-d  /home/polimi/robotics/src/first_project/lidar.rviz" ></node>  -->
 
 </launch>

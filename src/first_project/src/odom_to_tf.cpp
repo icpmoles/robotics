@@ -21,7 +21,7 @@ void poseCallback(
     q.setX(cart_heading.x);
     q.setY(cart_heading.y);
     q.setZ(cart_heading.z);
-    // q.normalize();
+    q.normalize();
     transform.setRotation(q);
 
     br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), rf, cf));

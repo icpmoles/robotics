@@ -2,14 +2,50 @@
 	"version":"2.0.0",
 	"tasks":[
 		{
-			"type": "catkin_build",
-			"task": "build",
-			"problemMatcher": [
-				"$catkin-gcc",
-				"$catkin-cmake"
-			],
-			"label": "catkin_build: build",
-			"group": "build"
+			"label": "build ROS code and launch",
+			"type": "shell",
+			"command": "catkin_make && roslaunch first_project launch.launch",
+			"group": "test",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			},
+			"problemMatcher": [],
+			"runOptions": {
+				"instanceLimit": 1
+			}
+		},
+		{
+			"label": "plotjuggler",
+			"type": "shell",
+			"command": "rosrun plotjuggler plotjuggler",
+			"group": "test",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			},
+			"problemMatcher": [],
+			"runOptions": {
+				"instanceLimit": 1
+			}
+		},
+		{
+			"label": "rviz",
+			"type": "shell",
+			"command": "rviz -d /home/polimi/robotics/src/first_project/lidar.rviz",
+			"group": "test",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			},
+			"problemMatcher": [],
+			"runOptions": {
+				"instanceLimit": 1
+			}
 		}
-	]
+	],
+    "group": {
+        "kind": "test",
+        "isDefault": true
+    }
 }
