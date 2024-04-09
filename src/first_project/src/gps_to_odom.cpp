@@ -12,7 +12,7 @@
 #define A_EQRAD 6378137
 #define B_POLRAD 6356752.31425
 #define E_SQUARED 0.00669437999014
-#define MA_SIZE 10
+#define MA_SIZE 12
 
 
 std::deque<double> N_queue(MA_SIZE, 0.0);
@@ -129,16 +129,16 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     actualNED.timestamp=msg->header.stamp; // the NED positione was "acquired" at the same time of the Fix
     
 
-    // NED to XYZ ??????
-    data.pose.pose.position.x=actualNED.N; 
-    data.pose.pose.position.y=actualNED.E;
-    data.pose.pose.position.z=actualNED.D;
+    // NED to XYZ ?????? ENU https://www.ros.org/reps/rep-0103.html
+    data.pose.pose.position.y=actualNED.N; 
+    data.pose.pose.position.x=actualNED.E;
+    data.pose.pose.position.z=-actualNED.D;
     
     //calculate heading
     double delta_space=0; //distance between two fixes
     double yaw_est = 0; // yaw of vehicle fixed to E axis, positive ccw
     double yaw_est_simple = 0;
-    double prevYaw = 0;
+    double prevYaw;
     double yaw_deriv = 0; //velocity of rotation in the yaw axis, just for curiosity
     double delta_N=0; // difference in 2d NED place
     double delta_E=0;
@@ -183,7 +183,7 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
             N_queue.pop_front();
             E_queue.pop_front();
             }
-            yaw_est_simple = atan2(delta_N,delta_E); // - heading_zero;
+            yaw_est_simple = atan2(delta_N,delta_E) - heading_zero;
         }
         else if (msg->header.seq>100 ){ // if we are not at the start we can use this trick otherwise it makes up angles
             yaw_est = prevPo->Y;

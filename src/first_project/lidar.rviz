@@ -7,6 +7,8 @@ Panels:
         - /Global Options1
         - /Status1
         - /LaserScan1
+        - /TF1/Frames1
+        - /TF1/Tree1
       Splitter Ratio: 0.5
     Tree Height: 696
   - Class: rviz/Selection
@@ -56,22 +58,22 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 0
-        Min Value: 0
+        Max Value: 23.954757690429688
+        Min Value: -25.358726501464844
         Value: true
-      Axis: Z
+      Axis: X
       Channel Name: z
       Class: rviz/LaserScan
       Color: 255; 255; 255
       Color Transformer: FlatColor
-      Decay Time: 0
+      Decay Time: 0.800000011920929
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Min Color: 0; 0; 0
       Name: LaserScan
       Position Transformer: XYZ
-      Queue Size: 10
+      Queue Size: 20
       Selectable: true
       Size (Pixels): 3
       Size (m): 0.009999999776482582
@@ -87,15 +89,15 @@ Visualization Manager:
       Filter (whitelist): ""
       Frame Timeout: 15
       Frames:
-        All Enabled: true
+        All Enabled: false
         gps_odom:
           Value: true
         odom:
-          Value: true
+          Value: false
         world:
           Value: true
       Marker Alpha: 1
-      Marker Scale: 1
+      Marker Scale: 10
       Name: TF
       Show Arrows: true
       Show Axes: true
@@ -135,7 +137,7 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Angle: 0
+      Angle: -0.030000071972608566
       Class: rviz/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
@@ -145,10 +147,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Scale: 10
+      Scale: 6.460371017456055
       Target Frame: <Fixed Frame>
-      X: -18.69999885559082
-      Y: -24.899999618530273
+      X: -5.040502548217773
+      Y: -13.220514297485352
     Saved:
       - Angle: -3.884999990463257
         Class: rviz/TopDownOrtho

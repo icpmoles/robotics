@@ -8,6 +8,9 @@ roslaunch first_project launch.launch
 
 
 catkin_make && roslaunch first_project launch.launch
+
+
+LD_PRELOAD=/home/polimi/apitrace-latest-Linux/lib/apitrace/wrappers/glxtrace.so rviz -d  /home/polimi/robotics/src/first_project/lidar.rviz
 ```
 
 ## First Node
