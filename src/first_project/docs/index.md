@@ -45,3 +45,5 @@ rqt{{Dynamic\nSelector}}-.-o3rdnode;
 In theory the NED should have |N|<90m and |E|<60m
 
 ![overlay of GPS track and satellite photo](map_estimate.png)
+
+[Simulation on youtube](https://www.youtube.com/watch?v=i_nodEOdT5w)
