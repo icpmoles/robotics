@@ -16,6 +16,29 @@
 			}
 		},
 		{
+            "label": "make_debug",
+            "type": "catkin_make",
+            "args": [
+                "--directory",
+                "${workspaceFolder}",
+                "-DCMAKE_BUILD_TYPE=Debug", // This extra argument enables built with debug symbols
+            ],
+            "problemMatcher": [
+                "$catkin-gcc"
+            ]            
+        },
+		{
+            "label": "rosCore",
+            "type": "shell",
+			"command": "roscore",
+            "problemMatcher": [
+                "$catkin-gcc"
+            ],
+			"runOptions": {
+				"instanceLimit": 1
+			}         
+        },
+		{
 			"label": "build ROS code and launch",
 			"type": "shell",
 			"command": "catkin_make && roslaunch first_project launch.launch",
