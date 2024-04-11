@@ -44,6 +44,20 @@
 			}
 		},
 		{
+			"label": "rqt configure",
+			"type": "shell",
+			"command": "rosrun rqt_reconfigure rqt_reconfigure",
+			"group": "test",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			},
+			"problemMatcher": [],
+			"runOptions": {
+				"instanceLimit": 1
+			}
+		},
+		{
 			"label": "rviz",
 			"type": "shell",
 			"command": "rviz -d /home/polimi/robotics/src/first_project/lidar.rviz",

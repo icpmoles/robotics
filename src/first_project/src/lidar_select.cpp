@@ -1,20 +1,20 @@
 #include <ros/ros.h>
 #include <dynamic_reconfigure/server.h>
 #include <sensor_msgs/LaserScan.h>
-#include <first_project/parametersConfig.h>
+#include <first_project/dynparametersConfig.h>
 #include <sstream>
 
 std::string TFframe = "gps_odom";
 
-void paramCallback(first_project::parametersConfig &config, uint32_t level) {
+void paramCallback(first_project::dynparametersConfig &config, uint32_t level) {
 
-  if (config.bool_param)
+  if (config.frame==0)
       TFframe = "gps_odom";
   else 
       TFframe = "odom";
  
-  ROS_INFO("Reconfigure Request:%s", 
-            config.bool_param?"True":"False");
+  // ROS_INFO("Reconfigure Request:%s", 
+  //           config.bool_param?"True":"False");
 }
 
 void filterCallBack(
@@ -39,8 +39,8 @@ int main(int argc, char** argv){
   std::string root_f, child_f;
   ros::Publisher laser_pub = nh.advertise<sensor_msgs::LaserScan>("/laser", 5);
   // dyn conf handles
-  dynamic_reconfigure::Server<first_project::parametersConfig> server;
-  dynamic_reconfigure::Server<first_project::parametersConfig>::CallbackType f;
+  dynamic_reconfigure::Server<first_project::dynparametersConfig> server;
+  dynamic_reconfigure::Server<first_project::dynparametersConfig>::CallbackType f;
 
   f = boost::bind(&paramCallback, _1, _2);
   server.setCallback(f);
