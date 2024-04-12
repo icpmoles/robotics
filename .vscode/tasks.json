@@ -1,100 +1,149 @@
 {
-	"version":"2.0.0",
-	"tasks":[
-		{
-			"label": "build ROS nodes",
-			"type": "shell",
-			"command": "catkin_make",
-			"group": "test",
-			"presentation": {
-				"reveal": "always",
-				"panel": "new"
-			},
-			"problemMatcher": [],
-			"runOptions": {
-				"instanceLimit": 1
-			}
-		},
-		{
+    "version": "2.0.0",
+    "typescript.tsc.autoDetect": "off",
+    "grunt.autoDetect": "off",
+    "jake.autoDetect": "off",
+    "gulp.autoDetect": "off",
+    "npm.autoDetect": "off",
+    "tasks": [
+        {
+            "label": "build ROS nodes",
+            "type": "shell",
+            "command": "catkin_make",
+            "group": "test",
+            "presentation": {
+                "reveal": "never",
+                "panel": "dedicated",
+                "revealProblems": "onProblem"
+            },
+            "problemMatcher": [],
+            "runOptions": {
+                "instanceLimit": 1
+            }
+        },
+        {
             "label": "make_debug",
             "type": "catkin_make",
             "args": [
                 "--directory",
                 "${workspaceFolder}",
-                "-DCMAKE_BUILD_TYPE=Debug", // This extra argument enables built with debug symbols
+                "-DCMAKE_BUILD_TYPE=Debug"
             ],
             "problemMatcher": [
                 "$catkin-gcc"
-            ]            
+            ]
         },
-		{
+        {
             "label": "rosCore",
             "type": "shell",
-			"command": "roscore",
+            "command": "roscore",
             "problemMatcher": [
                 "$catkin-gcc"
             ],
-			"runOptions": {
-				"instanceLimit": 1
-			}         
+            "runOptions": {
+                "instanceLimit": 1
+            }
         },
-		{
-			"label": "build ROS code and launch",
-			"type": "shell",
-			"command": "catkin_make && roslaunch first_project launch.launch",
-			"group": "test",
-			"presentation": {
-				"reveal": "always",
-				"panel": "new"
-			},
-			"problemMatcher": [],
-			"runOptions": {
-				"instanceLimit": 1
-			}
-		},
-		{
-			"label": "plotjuggler",
-			"type": "shell",
-			"command": "rosrun plotjuggler plotjuggler",
-			"group": "test",
-			"presentation": {
-				"reveal": "always",
-				"panel": "new"
-			},
-			"problemMatcher": [],
-			"runOptions": {
-				"instanceLimit": 1
-			}
-		},
-		{
-			"label": "rqt configure",
-			"type": "shell",
-			"command": "rosrun rqt_reconfigure rqt_reconfigure",
-			"group": "test",
-			"presentation": {
-				"reveal": "always",
-				"panel": "new"
-			},
-			"problemMatcher": [],
-			"runOptions": {
-				"instanceLimit": 1
-			}
-		},
-		{
-			"label": "rviz",
-			"type": "shell",
-			"command": "rviz -d /home/polimi/robotics/src/first_project/lidar.rviz",
-			"group": "test",
-			"presentation": {
-				"reveal": "always",
-				"panel": "new"
-			},
-			"problemMatcher": [],
-			"runOptions": {
-				"instanceLimit": 1
-			}
-		}
-	],
+        {
+            "label": "build ROS code and launch",
+            "type": "shell",
+            "command": "catkin_make && roslaunch first_project launch.launch",
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "revealProblems": "onProblem"
+            },
+            "problemMatcher": [],
+            "runOptions": {
+                "instanceLimit": 1
+            }
+        },
+        {
+            "label": "plotjuggler",
+            "type": "shell",
+            "command": "rosrun plotjuggler plotjuggler",
+            "group": "test",
+            "presentation": {
+                "reveal": "never",
+                "panel": "dedicated",
+                "revealProblems": "always"
+            },
+            "problemMatcher": [],
+            "runOptions": {
+                "instanceLimit": 1
+            }
+        },
+        {
+            "label": "rqt configure",
+            "type": "shell",
+            "command": "rosrun rqt_reconfigure rqt_reconfigure",
+            "group": "test",
+            "presentation": {
+                "reveal": "never",
+                "panel": "dedicated",
+                "revealProblems": "always"
+            },
+            "problemMatcher": [],
+            "runOptions": {
+                "instanceLimit": 1
+            }
+        },
+        {
+            "label": "rviz",
+            "type": "shell",
+            "command": "rviz -d /home/polimi/robotics/src/first_project/lidar.rviz",
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "problemMatcher": [],
+            "runOptions": {
+                "instanceLimit": 1
+            }
+        },
+        {
+            "type": "cppbuild",
+            "label": "C/C++: g++ build active file",
+            "command": "/usr/bin/g++",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-g",
+                "${file}",
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}"
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+            "detail": "Task generated by Debugger."
+        },
+        {
+            "type": "cppbuild",
+            "label": "C/C++: g++-9 build active file",
+            "command": "/usr/bin/g++-9",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-g",
+                "${file}",
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}"
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+            "detail": "Task generated by Debugger."
+        }
+    ],
     "group": {
         "kind": "test",
         "isDefault": true

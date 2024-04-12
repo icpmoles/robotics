@@ -12,18 +12,46 @@
 #define A_EQRAD 6378137
 #define B_POLRAD 6356752.31425
 #define E_SQUARED 0.00669437999014
-#define MA_SIZE 12
+#define MA_SIZE 4 // moving average size
 
 
-std::deque<double> N_queue(MA_SIZE, 0.0);
-std::deque<double> E_queue(MA_SIZE, 0.0);
+std::deque<double> N_queue(MA_SIZE, 0.0); // first element = oldest, last = most recent
+std::deque<double> E_queue(MA_SIZE, 0.0); // first element = oldest, last = most recent
 double heading_zero;
+
+double RadiusSlope(std::deque<double> const &x,std::deque<double> const &y ){
+    // see notes for understanding    
+
+
+    
+}
+
+// it takes the queue of x and y and decides the best algorithm to use
+double SlopeCalculator(std::deque<double> const &x,std::deque<double> const &y ){
+    // measure the total heading change of the queue (in radians)
+    double totHeadingChange = 0.0;
+    for (int i = 0; i < x.size()-1; i++)
+    {
+        totHeadingChange+=abs(atan2(y[i+1]-y[i],x[i+1]-x[]));
+    }
+    // if we accumulated in average more than 2 deg for every step we are in a turn
+    if (totHeadingChange>2.0*3.14/(180.0*MA_SIZE)){
+        return RadiusSlope(x,y);
+    }
+    else { // otherwise we are in a straight line and we can just use a circular moving average
+        return atan2( MovingAverage(N_queue), MovingAverage(E_queue)) ;
+    }
+   
+}
 
 // https://en.wikipedia.org/wiki/Circular_mean
 double MovingAverage( std::deque<double> const &q){
     double sum = 0.0;
     // ROS_INFO("New MA");
+   
+
     for (int i = 0; i < q.size(); i++) {
+
         sum += q[i];
         //  ROS_INFO("values: %f", q[i]);
     }
@@ -39,6 +67,7 @@ struct NED{
     ros::Time timestamp ;
     double Y = 0; //yaw, maybe useful for angular speed 
 };
+
 
 double prime_vertical(double lat ){
     double a = A_EQRAD ; // equatorial radius in meters
@@ -127,7 +156,7 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     // ECEF to NED
     NED actualNED = ECEFtoNED(*initFix,lat,lon,newPos); // NED at t
     actualNED.timestamp=msg->header.stamp; // the NED positione was "acquired" at the same time of the Fix
-    
+   
 
     // NED to XYZ ?????? ENU https://www.ros.org/reps/rep-0103.html
     data.pose.pose.position.y=actualNED.N; 
@@ -155,10 +184,10 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
         heading_zero = atan2(actualNED.N,actualNED.E);
     }
 
-    if (msg->header.seq>1)  // for a bug that i forgot about
+    if (msg->header.seq>1)  // for a bug that I forgot about
     {
-        if ( (actualNED.timestamp - prevPo->timestamp).toSec() < 5 ){ 
-            //in case the delta_T is too crazy (eg reset of bag or startup) let's give an arbitrary value
+        if ( abs((actualNED.timestamp - prevPo->timestamp).toSec()) < 5 ){ 
+            //in case the delta_T is "reasonable" we use it instead of the deafult 0.5s
             delta_T = actualNED.timestamp - prevPo->timestamp;
         }
         
@@ -168,27 +197,30 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
         delta_space = sqrt( pow(delta_N,2) + pow(delta_E,2) );
         vel = delta_space/diff_t;
 
+
+        
+        // fill our queue
+        N_queue.push_back(delta_N);
+        E_queue.push_back(delta_E);
+        
         // if we don't move much in the refresh window it's hard to estimate the heading becuase of the uncertinty of the GPS, 
         // so we just use the previous heading and stick with it
-        
-        
         if (delta_space>0.04){
-            if(true){
-            // fill our queue
-            N_queue.push_back(delta_N);
-            E_queue.push_back(delta_E);
+            
             // calculate MovingAverage
             yaw_est = atan2( MovingAverage(N_queue), MovingAverage(E_queue)) ; // - heading_zero;
-            // pop old values
-            N_queue.pop_front();
-            E_queue.pop_front();
-            }
+            
             yaw_est_simple = atan2(delta_N,delta_E) - heading_zero;
         }
         else if (msg->header.seq>100 ){ // if we are not at the start we can use this trick otherwise it makes up angles
             yaw_est = prevPo->Y;
             yaw_est_simple = prevPo->Y;
         }
+
+        // pop old values
+        N_queue.pop_front();
+        E_queue.pop_front();
+            
         actualNED.Y = yaw_est;
         yaw_deriv= (yaw_est - prevPo->Y)/diff_t;
         q.setRPY( 0, 0, yaw_est);
@@ -203,8 +235,19 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
 
     data.twist.twist.linear.x=vel;
     data.twist.twist.angular.z=yaw_deriv;
-    data.twist.twist.angular.y=heading_zero ; //yaw_est_simple; // for debugging ; 
+    data.twist.twist.angular.y=yaw_est -heading_zero; //yaw_est_simple; // for debugging ; 
    
+     // -0.001303 0.000370 causes crash
+    if ((actualNED.E<=-0.001302 and actualNED.E>=-0.001303) or (actualNED.N<=0.000371 and actualNED.N>=0.000369) )
+    {
+            
+        ROS_INFO("Did it crash?");    
+    }
+    if ((actualNED.N<=-0.001302 and actualNED.N>=-0.001303) or (actualNED.E<=0.000371 and actualNED.E>=0.000369) )
+    {
+            
+        ROS_INFO("Did it crash? pt2");    
+    }
 
     if (logging){
     data.twist.twist.linear.y=diff_t;
@@ -258,6 +301,7 @@ int main(int argc, char **argv){
         ROS_INFO("Initial datum is going to be aquired by GPS data"); 
     }
 
+    
     // starting NED position, it's going to be updated through the execution
     NED prevPoistion;
 

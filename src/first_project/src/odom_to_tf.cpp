@@ -24,6 +24,13 @@ void poseCallback(
     q.normalize();
     transform.setRotation(q);
 
+
+    if ((cart_position.x<=-0.001302 and cart_position.x>=-0.001303) or (cart_position.y<=0.000371 and cart_position.y>=0.000369) )
+    {
+            
+        ROS_INFO("Did it crash?");    
+    }
+
     br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), rf, cf));
 }
 

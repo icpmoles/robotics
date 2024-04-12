@@ -1,6 +1,6 @@
 <launch>
  <!-- <node pkg="rosbag" type="play" name="player" output="screen" args=" -l src/bags/robotics.bag -r 10"/> -->
- <node pkg="rosbag" type="play" name="loop" args=" -l /home/polimi/robotics/src/bags/robotics.bag -r 1" required="true" output="screen"></node>
+ <node pkg="rosbag" type="play" name="loop" args=" -l /home/polimi/robotics/src/bags/robotics.bag -r 10" required="true" output="screen"></node>
 
  <param name="alt_zero" value="169.04000000000002" />
  <param name="lat_zero" value="45.47766945833333" />
