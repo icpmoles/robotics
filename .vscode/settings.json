@@ -71,7 +71,8 @@
         "*.ipp": "cpp",
         "codecvt": "cpp",
         "future": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "ios": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled",
     "python.autoComplete.extraPaths": [

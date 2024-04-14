@@ -12,37 +12,32 @@
 #define A_EQRAD 6378137
 #define B_POLRAD 6356752.31425
 #define E_SQUARED 0.00669437999014
-#define MA_SIZE 4 // moving average size
+#define MA_SIZE 6 // moving average size
+
+
+
+double heading_zero;
+
+
+double RadToDeg(double radians){
+    return radians*180.0/PI;
+}
+
+struct ECEF {
+    double X, Y, Z;
+};
+
+struct NED{
+    double N = 0, E = 0, D = 0;
+    ros::Time timestamp ;
+    double Y = 0; //yaw, maybe useful for angular speed 
+};
 
 
 std::deque<double> N_queue(MA_SIZE, 0.0); // first element = oldest, last = most recent
 std::deque<double> E_queue(MA_SIZE, 0.0); // first element = oldest, last = most recent
-double heading_zero;
+std::deque<NED> Pose_queue(MA_SIZE); // first element = oldest, last = most recent
 
-double RadiusSlope(std::deque<double> const &x,std::deque<double> const &y ){
-    // see notes for understanding    
-
-
-    
-}
-
-// it takes the queue of x and y and decides the best algorithm to use
-double SlopeCalculator(std::deque<double> const &x,std::deque<double> const &y ){
-    // measure the total heading change of the queue (in radians)
-    double totHeadingChange = 0.0;
-    for (int i = 0; i < x.size()-1; i++)
-    {
-        totHeadingChange+=abs(atan2(y[i+1]-y[i],x[i+1]-x[]));
-    }
-    // if we accumulated in average more than 2 deg for every step we are in a turn
-    if (totHeadingChange>2.0*3.14/(180.0*MA_SIZE)){
-        return RadiusSlope(x,y);
-    }
-    else { // otherwise we are in a straight line and we can just use a circular moving average
-        return atan2( MovingAverage(N_queue), MovingAverage(E_queue)) ;
-    }
-   
-}
 
 // https://en.wikipedia.org/wiki/Circular_mean
 double MovingAverage( std::deque<double> const &q){
@@ -58,15 +53,102 @@ double MovingAverage( std::deque<double> const &q){
     return sum;
 }
 
-struct ECEF {
-    double X, Y, Z;
-};
+double SimpleEstimator(){
 
-struct NED{
-    double N = 0, E = 0, D = 0;
-    ros::Time timestamp ;
-    double Y = 0; //yaw, maybe useful for angular speed 
-};
+    return atan2( MovingAverage(N_queue), MovingAverage(E_queue)) ;
+
+}
+// given a sequence of poses, esimates the p_tilde coefficent
+double PCoeff(NED pose0, NED pose1, NED pose2 ){
+
+    double x0=pose0.E;
+    double x1=pose1.E;
+    double x2=pose2.E;
+    double y0=pose0.N;
+    double y1=pose0.N;
+    double y2=pose0.N;
+    
+    
+    // phi_ab = atan2 (yb-ya,xb-xa)
+    double phi_01=atan2( y1-y0 , x1-x0 ); //heading two steps back
+    double phi_12=atan2( y2-y1 , x2-x1 ); //heading one step back
+    
+
+    return 0.5*( cos(phi_12)*(x0-x2) +  sin(phi_12)*(y0-y2) ) / ( sin(phi_01 - phi_12) );
+
+}
+
+double RadiusSlope(std::deque<NED> const &pose ){
+    // uses a circumference to calculate the predicted heading
+    // see notes for understanding
+    // we take t-2="0", t-1="1", t="2"   
+    // z[sz-1]    is z at t
+    // z[sz-1 -1] is z at t-1
+    // z[sz-1 -2] is z at t-2
+    int sz=pose.size();
+    double x0=pose[sz-1 -2].N;
+    double x1=pose[sz-1 -1].N;
+    double x2=pose[sz-1   ].N;
+    double y0=pose[sz-1 -2].E;
+    double y1=pose[sz-1 -1].E;
+    double y2=pose[sz-1   ].E;
+    
+    
+    // phi_ab = atan2 (yb-ya,xb-xa)
+    double phi_01=atan2( y1-y0 , x1-x0 ); //heading two steps back
+    double phi_12=atan2( y2-y1 , x2-x1 ); //heading one step back
+    
+
+    double p = 0.5*( cos(phi_12)*(x0-x2) +  sin(phi_12)*(y0-y2) ) / ( sin(phi_01 - phi_12) );
+    double CenterX=0.5*(x0+x1)-p*sin(phi_01);
+    double CenterY=0.5*(y0+y1)+p*cos(phi_01);
+
+
+    double theta_hat, theta =0.0;
+    theta_hat=atan2(y2-CenterY,x2-CenterX);
+    if (p>0) { 
+        theta = theta_hat + PI/2;
+     }
+    else{
+         theta = theta_hat - PI/2;
+    }
+
+    return theta;
+}
+
+
+// it takes the queue of x and y and decides the best algorithm to use
+double SlopeCalculator(std::deque<NED> const &pose, std::deque<double> const &N_queue,std::deque<double> const &E_queue){
+    // measure the total heading change of the queue (in radians)
+    double averHCd, totHeadingChange = 0.0;
+    int inaTurn = false;
+    for (int i = pose.size()-1; i > 4; i--) // if for 5 positions we turn on the same direction (CCw or CW) then we are in a turn an not just 
+    //in a straight line
+    {
+        bool s0 = PCoeff(pose[i],pose[i-1],pose[i-2])>0;
+        int s1 = (PCoeff(pose[i-1],pose[i-2],pose[i-3]))>0;
+        int s2 = (PCoeff(pose[i-2],pose[i-3],pose[i-4]))>0;
+        ROS_INFO("%i %i %i",s0,s1,s2);
+        if ((s0==s1) and (s1==s2)){
+        inaTurn = true;
+        ROS_INFO("In a turn");
+        }
+        else{
+        ROS_INFO("Straight");
+        }
+    }
+    
+    if (inaTurn){
+        return RadiusSlope(Pose_queue);
+    }
+    else { // otherwise we are in a straight line and we can just use a circular moving average
+        
+        return atan2( MovingAverage(N_queue), MovingAverage(E_queue)) ;
+    }
+   
+}
+
+
 
 
 double prime_vertical(double lat ){
@@ -131,7 +213,7 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     double alt = msg->altitude *PI/180;
     // gps to ECEF
     ECEF newPos = gpsToECEF(lat, lon, alt);
-    
+    bool new_algo =false; // i tried implementing a more sophisticated algo, it didn't work. keep it false
     
     if (*toInit==true) {
         ROS_INFO("Initializing Datum");
@@ -186,44 +268,51 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
 
     if (msg->header.seq>1)  // for a bug that I forgot about
     {
-        if ( abs((actualNED.timestamp - prevPo->timestamp).toSec()) < 5 ){ 
-            //in case the delta_T is "reasonable" we use it instead of the deafult 0.5s
-            delta_T = actualNED.timestamp - prevPo->timestamp;
-        }
+    if ( abs((actualNED.timestamp - prevPo->timestamp).toSec()) < 5 ){ 
+        //in case the delta_T is "reasonable" we use it instead of the deafult 0.5s
+        delta_T = actualNED.timestamp - prevPo->timestamp;
+    }
+    
+    diff_t = delta_T.toSec();
+    delta_N = actualNED.N - prevPo->N;
+    delta_E = actualNED.E - prevPo->E;
+    delta_space = sqrt( pow(delta_N,2) + pow(delta_E,2) );
+    vel = delta_space/diff_t;
+
+    Pose_queue.push_back(actualNED);
+    
+    // fill our queue
+    N_queue.push_back(delta_N);
+    E_queue.push_back(delta_E);
+    
+    // if we don't move much in the refresh window it's hard to estimate the heading becuase of the uncertinty of the GPS, 
+    // so we just use the previous heading and stick with it
+    if (delta_space>0.04){
         
-        diff_t = delta_T.toSec();
-        delta_N = actualNED.N - prevPo->N;
-        delta_E = actualNED.E - prevPo->E;
-        delta_space = sqrt( pow(delta_N,2) + pow(delta_E,2) );
-        vel = delta_space/diff_t;
+        // calculate MovingAverage
+        // yaw_est = atan2( MovingAverage(N_queue), MovingAverage(E_queue)) ; // - heading_zero;
+       
+       if (new_algo) 
+       yaw_est = SlopeCalculator(Pose_queue,E_queue, N_queue);
+       else
+       yaw_est=SimpleEstimator();
 
 
-        
-        // fill our queue
-        N_queue.push_back(delta_N);
-        E_queue.push_back(delta_E);
-        
-        // if we don't move much in the refresh window it's hard to estimate the heading becuase of the uncertinty of the GPS, 
-        // so we just use the previous heading and stick with it
-        if (delta_space>0.04){
-            
-            // calculate MovingAverage
-            yaw_est = atan2( MovingAverage(N_queue), MovingAverage(E_queue)) ; // - heading_zero;
-            
-            yaw_est_simple = atan2(delta_N,delta_E) - heading_zero;
-        }
-        else if (msg->header.seq>100 ){ // if we are not at the start we can use this trick otherwise it makes up angles
-            yaw_est = prevPo->Y;
-            yaw_est_simple = prevPo->Y;
-        }
+        yaw_est_simple = atan2(delta_N,delta_E) - heading_zero;
+    }
+    else if (msg->header.seq>100 ){ // if we are not at the start we can use this trick otherwise it makes up angles
+        yaw_est = prevPo->Y;
+        yaw_est_simple = prevPo->Y;
+    }
 
-        // pop old values
-        N_queue.pop_front();
-        E_queue.pop_front();
-            
-        actualNED.Y = yaw_est;
-        yaw_deriv= (yaw_est - prevPo->Y)/diff_t;
-        q.setRPY( 0, 0, yaw_est);
+    // pop old values
+    N_queue.pop_front();
+    E_queue.pop_front();
+    Pose_queue.pop_front();
+        
+    actualNED.Y = yaw_est;
+    yaw_deriv= (yaw_est - prevPo->Y)/diff_t;
+    q.setRPY( 0, 0, yaw_est);
     } // otherwise we simply update 
 
     *prevPo = actualNED;
