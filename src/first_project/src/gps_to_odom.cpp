@@ -259,16 +259,17 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     tf::Quaternion q; 
     
     // if we don't have an initial heading estimation and we just got out
-    // from a circle of radius 0.2m (already squared to skip the sqrt for the cartesian norm)
+    // from a circle of radius 0.3m we don't initialize the initialHeading
     // 
-    if ( (!initialHeadingEstimated) && (actualNED.N*actualNED.N + actualNED.E*actualNED.E > 0.09) ) { 
+    if ( (!initialHeadingEstimated) && (sqrt(actualNED.N*actualNED.N + actualNED.E*actualNED.E) > 0.3) ) { 
         initialHeadingEstimated = true;
         heading_zero = atan2(actualNED.N,actualNED.E);
     }
 
-    if (msg->header.seq>1)  // for a bug that I forgot about
-    {
-    if ( abs((actualNED.timestamp - prevPo->timestamp).toSec()) < 5 ){ 
+    // if (msg->header.seq>1)  {// for a bug that I forgot about
+    
+    if ( abs((actualNED.timestamp - prevPo->timestamp).toSec()) < 5 )
+    { 
         //in case the delta_T is "reasonable" we use it instead of the deafult 0.5s
         delta_T = actualNED.timestamp - prevPo->timestamp;
     }
@@ -287,7 +288,7 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     
     // if we don't move much in the refresh window it's hard to estimate the heading becuase of the uncertinty of the GPS, 
     // so we just use the previous heading and stick with it
-    if (delta_space>0.04){
+    if (delta_space>0.1){
         
         // calculate MovingAverage
         // yaw_est = atan2( MovingAverage(N_queue), MovingAverage(E_queue)) ; // - heading_zero;
@@ -313,7 +314,7 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     actualNED.Y = yaw_est;
     yaw_deriv= (yaw_est - prevPo->Y)/diff_t;
     q.setRPY( 0, 0, yaw_est);
-    } // otherwise we simply update 
+   // }  otherwise we simply update 
 
     *prevPo = actualNED;
     

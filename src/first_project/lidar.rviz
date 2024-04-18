@@ -10,6 +10,8 @@ Panels:
         - /TF1/Frames1
         - /TF1/Tree1
         - /PoseWithCovariance1
+        - /Odometry1
+        - /Odometry1/Shape1
       Splitter Ratio: 0.5
     Tree Height: 696
   - Class: rviz/Selection
@@ -142,6 +144,41 @@ Visualization Manager:
       Topic: /initialpose
       Unreliable: false
       Value: true
+    - Angle Tolerance: 0.10000000149011612
+      Class: rviz/Odometry
+      Covariance:
+        Orientation:
+          Alpha: 0.5
+          Color: 255; 255; 127
+          Color Style: Unique
+          Frame: Local
+          Offset: 1
+          Scale: 1
+          Value: true
+        Position:
+          Alpha: 0.30000001192092896
+          Color: 204; 51; 204
+          Scale: 1
+          Value: true
+        Value: true
+      Enabled: true
+      Keep: 100
+      Name: Odometry
+      Position Tolerance: 0.10000000149011612
+      Queue Size: 10
+      Shape:
+        Alpha: 1
+        Axes Length: 1
+        Axes Radius: 0.10000000149011612
+        Color: 85; 255; 255
+        Head Length: 0.30000001192092896
+        Head Radius: 0.10000000149011612
+        Shaft Length: 5
+        Shaft Radius: 0.05000000074505806
+        Value: Arrow
+      Topic: /gps_odom
+      Unreliable: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -169,7 +206,7 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Angle: -0.019999992102384567
+      Angle: -0.07499998807907104
       Class: rviz/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
@@ -179,10 +216,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Scale: 9.61434268951416
+      Scale: 12.292095184326172
       Target Frame: <Fixed Frame>
-      X: -17.86494255065918
-      Y: -21.272472381591797
+      X: -25.682165145874023
+      Y: -48.85774612426758
     Saved:
       - Angle: -3.884999990463257
         Class: rviz/TopDownOrtho
