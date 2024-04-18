@@ -6,9 +6,8 @@ std::string child_frame;
 
 
 
-void poseCallback(
-    const nav_msgs::Odometry::ConstPtr& msg,
-    std::string rf, std::string cf ){
+void poseCallback(const nav_msgs::Odometry::ConstPtr& msg,
+                  std::string rf, std::string cf ) {
 
     static tf::TransformBroadcaster br;
     tf::Transform transform;
@@ -35,9 +34,9 @@ void poseCallback(
 }
 
 int main(int argc, char** argv){
-  child_frame = argv[1];
+  //child_frame = argv[1];
 
-  ros::init(argc, argv, "o2tf_"+child_frame, 
+  ros::init(argc, argv, "o2tf_", 
             ros::init_options::AnonymousName);
   
   ros::NodeHandle nh;

@@ -11,7 +11,7 @@
             "name": "ROS: Launch FP",
             "type": "ros",
             "request": "launch",
-            "target": "${workspaceFolder}/src/first_project/launch/launch.launch",
+            "target": "${workspaceFolder}/src/first_project/launch/auto.launch",
             "preLaunchTask": "make_debug"
         },
         {

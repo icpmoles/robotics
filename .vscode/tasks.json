@@ -47,7 +47,7 @@
         {
             "label": "build ROS code and launch",
             "type": "shell",
-            "command": "catkin_make && roslaunch first_project launch.launch",
+            "command": "catkin_make && roslaunch first_project auto.launch",
             "group": "test",
             "presentation": {
                 "reveal": "always",

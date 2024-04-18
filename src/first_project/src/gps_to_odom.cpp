@@ -30,7 +30,7 @@ struct ECEF {
 struct NED{
     double N = 0, E = 0, D = 0;
     ros::Time timestamp ;
-    double Y = 0; //yaw, maybe useful for angular speed 
+    double Y = 0; //yaw, may be useful for angular speed 
 };
 
 
