@@ -27,8 +27,8 @@ struct ECEF {
     double X, Y, Z;
 };
 
-struct NED{
-    double N = 0, E = 0, D = 0;
+struct ENU{
+    double N = 0, E = 0, U = 0;
     ros::Time timestamp ;
     double Y = 0; //yaw, may be useful for angular speed 
 };
@@ -36,7 +36,7 @@ struct NED{
 
 std::deque<double> N_queue(MA_SIZE, 0.0); // first element = oldest, last = most recent
 std::deque<double> E_queue(MA_SIZE, 0.0); // first element = oldest, last = most recent
-std::deque<NED> Pose_queue(MA_SIZE); // first element = oldest, last = most recent
+std::deque<ENU> Pose_queue(MA_SIZE); // first element = oldest, last = most recent
 
 
 // https://en.wikipedia.org/wiki/Circular_mean
@@ -59,7 +59,7 @@ double SimpleEstimator(){
 
 }
 // given a sequence of poses, esimates the p_tilde coefficent
-double PCoeff(NED pose0, NED pose1, NED pose2 ){
+double PCoeff(ENU pose0, ENU pose1, ENU pose2 ){
 
     double x0=pose0.E;
     double x1=pose1.E;
@@ -78,7 +78,7 @@ double PCoeff(NED pose0, NED pose1, NED pose2 ){
 
 }
 
-double RadiusSlope(std::deque<NED> const &pose ){
+double RadiusSlope(std::deque<ENU> const &pose ){
     // uses a circumference to calculate the predicted heading
     // see notes for understanding
     // we take t-2="0", t-1="1", t="2"   
@@ -118,7 +118,7 @@ double RadiusSlope(std::deque<NED> const &pose ){
 
 
 // it takes the queue of x and y and decides the best algorithm to use
-double SlopeCalculator(std::deque<NED> const &pose, std::deque<double> const &N_queue,std::deque<double> const &E_queue){
+double SlopeCalculator(std::deque<ENU> const &pose, std::deque<double> const &N_queue,std::deque<double> const &E_queue){
     // measure the total heading change of the queue (in radians)
     double averHCd, totHeadingChange = 0.0;
     int inaTurn = false;
@@ -160,20 +160,20 @@ double prime_vertical(double lat ){
 
 // https://onlinelibrary.wiley.com/doi/pdf/10.1002/9780470099728.app3 C.80 -> C.82
 // ECEF coordinates plus latitude and longitude (in radians) of the "landmark reference" as float, and the new position in ECEF
-NED ECEFtoNED(ECEF datum, double lat, double lon, ECEF position){ 
+ENU ECEFtoENU(ECEF datum, double lat, double lon, ECEF position){ 
     double deltaX=position.X-datum.X;
     double deltaY=position.Y-datum.Y;
     double deltaZ=position.Z-datum.Z;
 
-    NED temp;
+    ENU temp;
     temp.N =-cos(lon)* sin(lat)  *deltaX  
             -sin(lon)* sin(lat)  *deltaY 
                     +  cos(lat) *deltaZ;
     temp.E =   -sin(lon)*deltaX + 
                 cos(lon)*deltaY;
-    temp.D = -cos(lon)*cos(lat)*deltaX + 
+    temp.U =-( -cos(lon)*cos(lat)*deltaX + 
             (-sin(lon)*cos(lat))*deltaY +
-                    (-sin(lat))*deltaZ; 
+                    (-sin(lat))*deltaZ ); 
     return temp;           
 }
 
@@ -202,7 +202,7 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
                     ros::NodeHandle nh, 
                     ros::Publisher ph,
                     ECEF *initFix,
-                    NED *prevPo)
+                    ENU *prevPo)
 {
     bool logging = false;
     //print out the received lat
@@ -236,14 +236,14 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     data.header.frame_id= "world";
     data.child_frame_id = "gps_transceiver";
     // ECEF to NED
-    NED actualNED = ECEFtoNED(*initFix,lat,lon,newPos); // NED at t
-    actualNED.timestamp=msg->header.stamp; // the NED positione was "acquired" at the same time of the Fix
+    ENU actualENU = ECEFtoENU(*initFix,lat,lon,newPos); // NED at t
+    actualENU.timestamp=msg->header.stamp; // the NED positione was "acquired" at the same time of the Fix
    
 
     // NED to XYZ ?????? ENU https://www.ros.org/reps/rep-0103.html
-    data.pose.pose.position.y=actualNED.N; 
-    data.pose.pose.position.x=actualNED.E;
-    data.pose.pose.position.z=-actualNED.D;
+    data.pose.pose.position.y=actualENU.N; 
+    data.pose.pose.position.x=actualENU.E;
+    data.pose.pose.position.z=actualENU.U;
     
     //calculate heading
     double delta_space=0; //distance between two fixes
@@ -261,26 +261,26 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     // if we don't have an initial heading estimation and we just got out
     // from a circle of radius 0.3m we don't initialize the initialHeading
     // 
-    if ( (!initialHeadingEstimated) && (sqrt(actualNED.N*actualNED.N + actualNED.E*actualNED.E) > 0.3) ) { 
+    if ( (!initialHeadingEstimated) && (sqrt(actualENU.N*actualENU.N + actualENU.E*actualENU.E) > 0.3) ) { 
         initialHeadingEstimated = true;
-        heading_zero = atan2(actualNED.N,actualNED.E);
+        heading_zero = atan2(actualENU.N,actualENU.E);
     }
 
     // if (msg->header.seq>1)  {// for a bug that I forgot about
     
-    if ( abs((actualNED.timestamp - prevPo->timestamp).toSec()) < 5 )
+    if ( abs((actualENU.timestamp - prevPo->timestamp).toSec()) < 5 )
     { 
         //in case the delta_T is "reasonable" we use it instead of the deafult 0.5s
-        delta_T = actualNED.timestamp - prevPo->timestamp;
+        delta_T = actualENU.timestamp - prevPo->timestamp;
     }
     
     diff_t = delta_T.toSec();
-    delta_N = actualNED.N - prevPo->N;
-    delta_E = actualNED.E - prevPo->E;
+    delta_N = actualENU.N - prevPo->N;
+    delta_E = actualENU.E - prevPo->E;
     delta_space = sqrt( pow(delta_N,2) + pow(delta_E,2) );
     vel = delta_space/diff_t;
 
-    Pose_queue.push_back(actualNED);
+    Pose_queue.push_back(actualENU);
     
     // fill our queue
     N_queue.push_back(delta_N);
@@ -311,12 +311,12 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     E_queue.pop_front();
     Pose_queue.pop_front();
         
-    actualNED.Y = yaw_est;
+    actualENU.Y = yaw_est;
     yaw_deriv= (yaw_est - prevPo->Y)/diff_t;
     q.setRPY( 0, 0, yaw_est);
    // }  otherwise we simply update 
 
-    *prevPo = actualNED;
+    *prevPo = actualENU;
     
     data.pose.pose.orientation.w = q.getW();
     data.pose.pose.orientation.x = q.getX();
@@ -327,17 +327,17 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     data.twist.twist.angular.z=yaw_deriv;
     data.twist.twist.angular.y=yaw_est -heading_zero; //yaw_est_simple; // for debugging ; 
    
-     // -0.001303 0.000370 causes crash
-    if ((actualNED.E<=-0.001302 and actualNED.E>=-0.001303) or (actualNED.N<=0.000371 and actualNED.N>=0.000369) )
-    {
+    //  // -0.001303 0.000370 causes crash
+    // if ((actualNED.E<=-0.001302 and actualNED.E>=-0.001303) or (actualNED.N<=0.000371 and actualNED.N>=0.000369) )
+    // {
             
-        ROS_INFO("Did it crash?");    
-    }
-    if ((actualNED.N<=-0.001302 and actualNED.N>=-0.001303) or (actualNED.E<=0.000371 and actualNED.E>=0.000369) )
-    {
+    //     ROS_INFO("Did it crash?");    
+    // }
+    // if ((actualNED.N<=-0.001302 and actualNED.N>=-0.001303) or (actualNED.E<=0.000371 and actualNED.E>=0.000369) )
+    // {
             
-        ROS_INFO("Did it crash? pt2");    
-    }
+    //     ROS_INFO("Did it crash? pt2");    
+    // }
 
     if (logging){
     data.twist.twist.linear.y=diff_t;
@@ -355,10 +355,10 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     data.twist.twist.angular.y=initFix->Y;
     data.twist.twist.angular.z=initFix->Z;
 
-    ROS_INFO("NED coordinates"); 
-    ROS_INFO("DeltaN: [%f]", actualNED.N); 
-    ROS_INFO("DeltaE: [%f]", actualNED.E); 
-    ROS_INFO("DeltaD: [%f]", actualNED.D);
+    ROS_INFO("ENU coordinates"); 
+    ROS_INFO("DeltaN: [%f]", actualENU.N); 
+    ROS_INFO("DeltaE: [%f]", actualENU.E); 
+    ROS_INFO("DeltaU: [%f]", actualENU.U);
     }
     
 
@@ -393,7 +393,7 @@ int main(int argc, char **argv){
 
     
     // starting NED position, it's going to be updated through the execution
-    NED prevPoistion;
+    ENU prevPoistion;
 
     ros::Publisher odom_pub = nh.advertise<nav_msgs::Odometry>("gps_odom", 5);
     // subscribe to gps data

@@ -7,19 +7,19 @@
 
 <node pkg="first_project" name="gps_o2t" type="odom_to_tf" >
   <param name="input_odom" value="gps_odom" />
-  <param name="root_frame" value="map" />
+  <param name="root_frame" value="world" />
   <param name="child_frame" value="gps_odom" />
 </node>
 
 
  <node pkg="first_project" name="wheel_o2t" type="odom_to_tf" >
   <param name="input_odom" value="odom" />
-  <param name="root_frame" value="map" />
+  <param name="root_frame" value="world" />
   <param name="child_frame" value="odom" />
 </node>
 
 
 <node pkg="first_project" name="lidar_select" type="lidar_select" ></node>
 
-
+<node type="rviz" name="rviz" pkg="rviz" ></node> 
 </launch>
