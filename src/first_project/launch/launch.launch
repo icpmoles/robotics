@@ -6,14 +6,14 @@
  <node pkg="first_project" name="first_node" type="gps_to_odom" ></node>
 
 <node pkg="first_project" name="gps_o2t" type="odom_to_tf" >
-  <param name="input_odom" value="gps_odom" />
+  <remap to="/gps_odom" from="/input_odom"/>
   <param name="root_frame" value="world" />
   <param name="child_frame" value="gps_odom" />
 </node>
 
 
  <node pkg="first_project" name="wheel_o2t" type="odom_to_tf" >
-  <param name="input_odom" value="odom" />
+  <remap to="/odom" from="/input_odom"/>
   <param name="root_frame" value="world" />
   <param name="child_frame" value="odom" />
 </node>

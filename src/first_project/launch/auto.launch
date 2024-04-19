@@ -7,16 +7,18 @@
 
 <!-- <node pkg="first_project" name="gps_o2t" type="odom_to_tf" args="gps_odom"> -->
 <node pkg="first_project" name="gps_o2t" type="odom_to_tf" >
-  <param name="input_odom" value="gps_odom" />
+  <!-- <param name="input_odom" value="gps_odom" /> -->
   <param name="root_frame" value="world" />
   <param name="child_frame" value="gps_odom" />
+  <remap to="/gps_odom" from="/input_odom"/>
 </node>
 
 <!-- <node pkg="first_project" name="wheel_o2t" type="odom_to_tf" args="odom" > -->
  <node pkg="first_project" name="wheel_o2t" type="odom_to_tf" >
-  <param name="input_odom" value="odom" />
+  <!-- <param name="input_odom" value="odom" /> -->
   <param name="root_frame" value="world" />
   <param name="child_frame" value="odom" />
+  <remap to="/odom" from="/input_odom"/>
 </node>
 
 <node pkg="first_project" name="lidar_select" type="lidar_select" ></node>

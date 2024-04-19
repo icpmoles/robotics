@@ -8,9 +8,7 @@ Panels:
         - /Status1
         - /PointCloud21
         - /TF1
-        - /TF1/Frames1/gps_odom1/Orientation1
         - /TF1/Tree1
-        - /TF1/Tree1/world1
       Splitter Ratio: 0.5
     Tree Height: 708
   - Class: rviz/Selection
@@ -139,7 +137,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 97.31425476074219
+      Distance: 66.19718933105469
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -147,17 +145,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 6.967177867889404
-        Y: -72.08537292480469
-        Z: -17.91073226928711
+        X: 0.4794273376464844
+        Y: -28.974754333496094
+        Z: 36.7197151184082
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.0897963047027588
+      Pitch: 1.1197962760925293
       Target Frame: <Fixed Frame>
-      Yaw: 0.43039366602897644
+      Yaw: 4.8035783767700195
     Saved: ~
 Window Geometry:
   Displays:
@@ -175,5 +173,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1908
-  X: 0
-  Y: 0
+  X: -32
+  Y: -32

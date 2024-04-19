@@ -40,10 +40,10 @@ int main(int argc, char** argv){
   // we get the parameters of the topic to subscribe to
 	ros::NodeHandle nh_private("~"); // this is a private node handle
   std::string topic, root_f, child_f;
-	nh_private.getParam("input_odom", topic); //get local params
+	// nh_private.getParam("input_odom", topic); //get local params
   nh_private.getParam("root_frame", root_f);
   nh_private.getParam("child_frame", child_f);
-
+  topic = "input_odom";
 
   ros::Subscriber sub = nh.subscribe<nav_msgs::Odometry>(topic, 10,boost::bind(poseCallback, _1, root_f, child_f));
   
