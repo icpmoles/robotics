@@ -7,6 +7,10 @@
 #include <nav_msgs/Odometry.h>
 #include <sensor_msgs/NavSatFix.h>
 #include <sstream>
+#include <cmath>
+#include <complex>
+#include <iomanip>
+#include <iostream>
 #define PI 3.14159265358979323
 // taken from https://en.wikipedia.org/wiki/Latitude#The_geometry_of_the_ellipsoid
 #define A_EQRAD 6378137
@@ -120,31 +124,39 @@ double RadiusSlope(std::deque<ENU> const &pose ){
 // it takes the queue of x and y and decides the best algorithm to use
 double SlopeCalculator(std::deque<ENU> const &pose, std::deque<double> const &N_queue,std::deque<double> const &E_queue){
     // measure the total heading change of the queue (in radians)
+    double factor = 0.2;
     double averHCd, totHeadingChange = 0.0;
     int inaTurn = false;
-    for (int i = pose.size()-1; i > 4; i--) // if for 5 positions we turn on the same direction (CCw or CW) then we are in a turn an not just 
-    //in a straight line
-    {
-        bool s0 = PCoeff(pose[i],pose[i-1],pose[i-2])>0;
-        int s1 = (PCoeff(pose[i-1],pose[i-2],pose[i-3]))>0;
-        int s2 = (PCoeff(pose[i-2],pose[i-3],pose[i-4]))>0;
-        ROS_INFO("%i %i %i",s0,s1,s2);
-        if ((s0==s1) and (s1==s2)){
-        inaTurn = true;
-        ROS_INFO("In a turn");
-        }
-        else{
-        ROS_INFO("Straight");
-        }
-    }
+    // for (int i = pose.size()-1; i > 4; i--) // if for 5 positions we turn on the same direction (CCw or CW) then we are in a turn an not just 
+    // //in a straight line
+    // {
+    //     bool s0 = PCoeff(pose[i],pose[i-1],pose[i-2])>0;
+    //     int s1 = (PCoeff(pose[i-1],pose[i-2],pose[i-3]))>0;
+    //     int s2 = (PCoeff(pose[i-2],pose[i-3],pose[i-4]))>0;
+    //     ROS_INFO("%i %i %i",s0,s1,s2);
+    //     if ((s0==s1) and (s1==s2)){
+    //     inaTurn = true;
+    //     ROS_INFO("In a turn");
+    //     }
+    //     else{
+    //     ROS_INFO("Straight");
+    //     }
+    // }
     
-    if (inaTurn){
-        return RadiusSlope(Pose_queue);
-    }
-    else { // otherwise we are in a straight line and we can just use a circular moving average
+
+    double theta_p = SimpleEstimator(); // use the simple algorithm for a rough estimate (like a Proportional action)
+    double theta_d_E = RadiusSlope(Pose_queue); // use a "derivative action" to predict ahead (?)
+    
+    std::complex<double> v_p = std::polar(1.0 , theta_p);  // versor of proportial action
+    std::complex<double> v_d = std::polar(1.0 , theta_d_E); // versor of derivative action
+    return std::arg(v_p + factor*v_d );
+    // if (inaTurn){
+    //     return RadiusSlope(Pose_queue);
+    // }
+    // else { // otherwise we are in a straight line and we can just use a circular moving average
         
-        return atan2( MovingAverage(N_queue), MovingAverage(E_queue)) ;
-    }
+    //     return atan2( MovingAverage(N_queue), MovingAverage(E_queue)) ;
+    // }
    
 }
 
@@ -213,7 +225,7 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     double alt = msg->altitude *PI/180;
     // gps to ECEF
     ECEF newPos = gpsToECEF(lat, lon, alt);
-    bool new_algo =false; // i tried implementing a more sophisticated algo, it didn't work. keep it false
+    bool new_algo = true; // i tried implementing a more sophisticated algo, it didn't work. keep it false
     
     if (*toInit==true) {
         ROS_INFO("Initializing Datum");
@@ -325,7 +337,7 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
 
     data.twist.twist.linear.x=vel;
     data.twist.twist.angular.z=yaw_deriv;
-    data.twist.twist.angular.y=yaw_est -heading_zero; //yaw_est_simple; // for debugging ; 
+   // data.twist.twist.angular.y=yaw_est -heading_zero; //yaw_est_simple; // for debugging ; 
    
     //  // -0.001303 0.000370 causes crash
     // if ((actualNED.E<=-0.001302 and actualNED.E>=-0.001303) or (actualNED.N<=0.000371 and actualNED.N>=0.000369) )
@@ -402,7 +414,7 @@ int main(int argc, char **argv){
     ros::Subscriber gps_sub = nh.subscribe<sensor_msgs::NavSatFix> ("fix", 3, boost::bind(gpsCallback, _1, &datumToInit, nh, odom_pub,&initialECEF, &prevPoistion));
     // datumToInit=false; //we assume that the callback is going to do its job somehow
 
-	ros::Rate loop_rate(60); 
+	ros::Rate loop_rate(8); 
     
 
   	while (ros::ok()){
