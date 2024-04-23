@@ -288,7 +288,7 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     
     // if we don't move much in the refresh window it's hard to estimate the heading becuase of the uncertinty of the GPS, 
     // so we just use the previous heading and stick with it
-    if (delta_space>0.1){
+    if (delta_space>0.02){
         
         // calculate MovingAverage
         // yaw_est = atan2( MovingAverage(N_queue), MovingAverage(E_queue)) ; // - heading_zero;
