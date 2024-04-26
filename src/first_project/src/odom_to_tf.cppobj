@@ -1,0 +1,114 @@
+#include <ros/ros.h>
+#include <tf/transform_broadcaster.h>
+#include <nav_msgs/Odometry.h>
+
+std::string child_frame;
+
+
+
+class o2tf
+	{
+	// messages we are going to receive
+	std_msgs::String root_f;
+	std_msgs::String child_f;
+
+	private:
+
+	ros::NodeHandle nh; 
+	ros::Subscriber sub;
+	ros::Publisher pub; 
+	ros::Timer timer1;
+	tf::Transform transform;	
+		
+	public:
+	// initialize private objects
+  static ros::NodeHandle n; 
+		static ros::Subscriber sub;
+		static ros::Publisher pub;
+		static ros::Timer timer;
+    static tf::TransformBroadcaster br;
+	pub_sub(){
+    nh_private.getParam("root_frame", root_f);
+    nh_private.getParam("child_frame", child_f);
+	}
+	// callbacks to use when submitting and mixing messages
+	void callback(const std_msgs::String::ConstPtr& msg){
+		messagio=*msg;
+	}
+
+
+	void callback1(const ros::TimerEvent&)
+	{
+		pub.publish(messagio);
+		pub.publish(messagio2);
+		ROS_INFO("Callback 1 triggered");
+	}
+
+};
+
+ros::NodeHandle o2tf::nh; 
+ros::NodeHandle o2tf::nh_private("~"); 
+ros::Subscriber o2tf::sub = nh.subscribe<nav_msgs::Odometry>(topic, 10,boost::bind(poseCallback, _1, root_f, child_f));
+std_msgs::String o2tf::root_f = ""; // to find: how to initialize static menbers with idempotent functions
+std_msgs::String o2tf::child_f = "";
+ros::Publisher o2tf::pub = nh.advertise<std_msgs::String>("/rechatter", 1); ; 
+ros::Timer o2tf::timer1 = nh.createTimer(ros::Duration(1), &pub_sub::callback1, this);;
+tf::TransformBroadcaster o2tf::br;
+
+
+int main(int argc, char **argv)
+{
+ 	
+  ros::init(argc, argv, "o2tf_", 
+            ros::init_options::AnonymousName);
+
+ 	o2tf od2tf;
+ 	ros::spin();
+ 	return 0;
+}
+
+
+void poseCallback(const nav_msgs::Odometry::ConstPtr& msg,
+                  std::string rf, std::string cf ) {
+
+    static tf::TransformBroadcaster br;
+    tf::Transform transform;
+  
+    geometry_msgs::Point cart_position =  msg->pose.pose.position;
+    geometry_msgs::Quaternion cart_heading  = msg->pose.pose.orientation;
+    transform.setOrigin( tf::Vector3(cart_position.x, cart_position.y, 0.0) );
+    tf::Quaternion q;
+    q.setW(cart_heading.w);
+    q.setX(cart_heading.x);
+    q.setY(cart_heading.y);
+    q.setZ(cart_heading.z);
+    q.normalize();
+    transform.setRotation(q);
+
+
+
+    br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), rf, cf));
+}
+
+int main(int argc, char** argv){
+  //child_frame = argv[1];
+
+  ros::init(argc, argv, "o2tf_", 
+            ros::init_options::AnonymousName);
+  
+  ros::NodeHandle nh;
+  tf::TransformBroadcaster br;
+
+  // we get the parameters of the topic to subscribe to
+	ros::NodeHandle nh_private("~"); // this is a private node handle
+  std::string topic, root_f, child_f;
+	// nh_private.getParam("input_odom", topic); //get local params
+  nh_private.getParam("root_frame", root_f);
+  nh_private.getParam("child_frame", child_f);
+  topic = "input_odom";
+
+  ros::Subscriber sub = nh.subscribe<nav_msgs::Odometry>(topic, 10,boost::bind(poseCallback, _1, root_f, child_f));
+  
+  ros::spin();
+  return 0;
+};

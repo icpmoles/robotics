@@ -216,6 +216,8 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
                     ECEF *initFix,
                     ENU *prevPo)
 {
+    
+
     bool logging = false;
     //print out the received lat
     // ROS_INFO("Latitude: [%f]", msg->latitude); 
@@ -225,7 +227,7 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     double alt = msg->altitude *PI/180;
     // gps to ECEF
     ECEF newPos = gpsToECEF(lat, lon, alt);
-    bool new_algo = true; // i tried implementing a more sophisticated algo, it didn't work. keep it false
+    bool new_algo = false; // i tried implementing a more sophisticated algo, it didn't work. keep it false
     
     if (*toInit==true) {
         ROS_INFO("Initializing Datum");
@@ -269,7 +271,6 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     double diff_t;
     double vel;
     tf::Quaternion q; 
-    
     // if we don't have an initial heading estimation and we just got out
     // from a circle of radius 0.3m we don't initialize the initialHeading
     // 
@@ -300,7 +301,7 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     
     // if we don't move much in the refresh window it's hard to estimate the heading becuase of the uncertinty of the GPS, 
     // so we just use the previous heading and stick with it
-    if (delta_space>0.02){
+    if (initialHeadingEstimated) { //(delta_space>0.01){ 
         
         // calculate MovingAverage
         // yaw_est = atan2( MovingAverage(N_queue), MovingAverage(E_queue)) ; // - heading_zero;
@@ -313,7 +314,7 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
 
         yaw_est_simple = atan2(delta_N,delta_E) - heading_zero;
     }
-    else if (msg->header.seq>100 ){ // if we are not at the start we can use this trick otherwise it makes up angles
+    else { // if we are not at the start we can use this trick otherwise it makes up angles
         yaw_est = prevPo->Y;
         yaw_est_simple = prevPo->Y;
     }
@@ -339,17 +340,7 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     data.twist.twist.angular.z=yaw_deriv;
    // data.twist.twist.angular.y=yaw_est -heading_zero; //yaw_est_simple; // for debugging ; 
    
-    //  // -0.001303 0.000370 causes crash
-    // if ((actualNED.E<=-0.001302 and actualNED.E>=-0.001303) or (actualNED.N<=0.000371 and actualNED.N>=0.000369) )
-    // {
-            
-    //     ROS_INFO("Did it crash?");    
-    // }
-    // if ((actualNED.N<=-0.001302 and actualNED.N>=-0.001303) or (actualNED.E<=0.000371 and actualNED.E>=0.000369) )
-    // {
-            
-    //     ROS_INFO("Did it crash? pt2");    
-    // }
+
 
     if (logging){
     data.twist.twist.linear.y=diff_t;
@@ -373,6 +364,7 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     ROS_INFO("DeltaU: [%f]", actualENU.U);
     }
     
+
 
     ph.publish(data);
 
@@ -407,11 +399,11 @@ int main(int argc, char **argv){
     // starting NED position, it's going to be updated through the execution
     ENU prevPoistion;
 
-    ros::Publisher odom_pub = nh.advertise<nav_msgs::Odometry>("gps_odom", 5);
+    ros::Publisher odom_pub = nh.advertise<nav_msgs::Odometry>("gps_odom", 1);
     // subscribe to gps data
     // ros::Subscriber gps_sub = nh.subscribe("fix", 1, gpsCallback);
     // the callback functions also gets the bool if it's supposed to set the datum or not
-    ros::Subscriber gps_sub = nh.subscribe<sensor_msgs::NavSatFix> ("fix", 3, boost::bind(gpsCallback, _1, &datumToInit, nh, odom_pub,&initialECEF, &prevPoistion));
+    ros::Subscriber gps_sub = nh.subscribe<sensor_msgs::NavSatFix> ("fix", 2, boost::bind(gpsCallback, _1, &datumToInit, nh, odom_pub,&initialECEF, &prevPoistion));
     // datumToInit=false; //we assume that the callback is going to do its job somehow
 
 	ros::Rate loop_rate(8); 
