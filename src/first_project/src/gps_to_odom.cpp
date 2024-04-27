@@ -332,10 +332,10 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     data.pose.pose.orientation.z = q.getZ();
 
     }
-    else { //debias
-        std::complex<double> v_p = std::polar(1.0 , yaw_est -heading_zero) ;  //versor of direction in polar coordinates aligned to staring frame
-        double r = sqrt( pow(actualENU.N,2) + pow(actualENU.E,2) );
-        std::complex<double> p_p = std::polar( r , atan2(actualENU.N,actualENU.E) - heading_zero) ; // position in the new frame
+    else { // de - bias
+        using namespace std::complex_literals;
+        std::complex<double> v_p = std::polar(1.0 , yaw_est - heading_zero) ;  //versor of direction in polar coordinates aligned to staring frame
+        std::complex<double> p_p =  (actualENU.E + actualENU.N * 1i ) *  std::polar(1.0 , - heading_zero);  // position in the new frame
 
 
         data.pose.pose.position.x=std::real(p_p);
@@ -358,26 +358,12 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     yaw_deriv= (yaw_est - prevPo->Y)/diff_t;
 
 
-
-
-
-    
-    
-
-
-
-   
-   // }  otherwise we simply update 
-
     *prevPo = actualENU;
     
-    
-
     data.twist.twist.linear.x=vel;
     data.twist.twist.angular.z=heading_zero;
     data.twist.twist.angular.y=yaw_est -heading_zero; //yaw_est_simple; // for debugging ; 
    
-
 
     if (logging){
     data.twist.twist.linear.y=diff_t;
@@ -401,8 +387,6 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     ROS_INFO("DeltaU: [%f]", actualENU.U);
     }
     
-
-
     ph.publish(data);
 
 }
