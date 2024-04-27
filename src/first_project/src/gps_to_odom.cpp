@@ -16,7 +16,7 @@
 #define A_EQRAD 6378137
 #define B_POLRAD 6356752.31425
 #define E_SQUARED 0.00669437999014
-#define MA_SIZE 6 // moving average size
+#define MA_SIZE 2 // moving average size
 
 
 
@@ -217,7 +217,7 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
                     ENU *prevPo)
 {
     
-
+    bool useENUframe = false;
     bool logging = false;
     //print out the received lat
     // ROS_INFO("Latitude: [%f]", msg->latitude); 
@@ -254,11 +254,7 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     actualENU.timestamp=msg->header.stamp; // the NED positione was "acquired" at the same time of the Fix
    
 
-    // NED to XYZ ?????? ENU https://www.ros.org/reps/rep-0103.html
-    data.pose.pose.position.y=actualENU.N; 
-    data.pose.pose.position.x=actualENU.E;
-    data.pose.pose.position.z=actualENU.U;
-    
+
     //calculate heading
     double delta_space=0; //distance between two fixes
     double yaw_est = 0; // yaw of vehicle fixed to E axis, positive ccw
@@ -324,21 +320,62 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     E_queue.pop_front();
     Pose_queue.pop_front();
         
-    actualENU.Y = yaw_est;
-    yaw_deriv= (yaw_est - prevPo->Y)/diff_t;
+    if (useENUframe){ 
+    // NED to XYZ ?????? ENU https://www.ros.org/reps/rep-0103.html
+    data.pose.pose.position.y=actualENU.N; 
+    data.pose.pose.position.x=actualENU.E;
+    data.pose.pose.position.z=actualENU.U;
     q.setRPY( 0, 0, yaw_est);
-   // }  otherwise we simply update 
-
-    *prevPo = actualENU;
-    
     data.pose.pose.orientation.w = q.getW();
     data.pose.pose.orientation.x = q.getX();
     data.pose.pose.orientation.y = q.getY();
     data.pose.pose.orientation.z = q.getZ();
 
+    }
+    else { //debias
+        std::complex<double> v_p = std::polar(1.0 , yaw_est -heading_zero) ;  //versor of direction in polar coordinates aligned to staring frame
+        double r = sqrt( pow(actualENU.N,2) + pow(actualENU.E,2) );
+        std::complex<double> p_p = std::polar( r , atan2(actualENU.N,actualENU.E) - heading_zero) ; // position in the new frame
+
+
+        data.pose.pose.position.x=std::real(p_p);
+        data.pose.pose.position.y=std::imag(p_p); 
+        data.pose.pose.position.z=actualENU.U;
+
+        
+        q.setRPY( 0, 0, std::arg(v_p));
+        data.pose.pose.orientation.w = q.getW();
+        data.pose.pose.orientation.x = q.getX();
+        data.pose.pose.orientation.y = q.getY();
+        data.pose.pose.orientation.z = q.getZ();
+
+
+
+    }
+
+
+    actualENU.Y = yaw_est;
+    yaw_deriv= (yaw_est - prevPo->Y)/diff_t;
+
+
+
+
+
+    
+    
+
+
+
+   
+   // }  otherwise we simply update 
+
+    *prevPo = actualENU;
+    
+    
+
     data.twist.twist.linear.x=vel;
-    data.twist.twist.angular.z=yaw_deriv;
-   // data.twist.twist.angular.y=yaw_est -heading_zero; //yaw_est_simple; // for debugging ; 
+    data.twist.twist.angular.z=heading_zero;
+    data.twist.twist.angular.y=yaw_est -heading_zero; //yaw_est_simple; // for debugging ; 
    
 
 
