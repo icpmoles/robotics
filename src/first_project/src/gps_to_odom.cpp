@@ -122,11 +122,14 @@ double RadiusSlope(std::deque<ENU> const &pose ){
 
 
 // it takes the queue of x and y and decides the best algorithm to use
-double SlopeCalculator(std::deque<ENU> const &pose, std::deque<double> const &N_queue,std::deque<double> const &E_queue){
+double SlopeCalculator(
+    std::deque<ENU> const &pose, 
+    std::deque<double> const &N_queue,
+    std::deque<double> const &E_queue){
     // measure the total heading change of the queue (in radians)
     double factor = 0.2;
     double averHCd, totHeadingChange = 0.0;
-    int inaTurn = false;
+    // int inaTurn = false;
     // for (int i = pose.size()-1; i > 4; i--) // if for 5 positions we turn on the same direction (CCw or CW) then we are in a turn an not just 
     // //in a straight line
     // {
@@ -318,7 +321,7 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
         // yaw_est = atan2( MovingAverage(N_queue), MovingAverage(E_queue)) ; // - heading_zero;
        
        if (new_algo) 
-       yaw_est = SlopeCalculator(Pose_queue,E_queue, N_queue);
+       yaw_est = SlopeCalculator(Pose_queue, N_queue, E_queue);
        else
        yaw_est=SimpleEstimator();
 
