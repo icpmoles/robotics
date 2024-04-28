@@ -38,15 +38,15 @@ struct ENU{
 };
 
 
-std::deque<double> N_queue(MA_SIZE, 0.0); // first element = oldest, last = most recent
-std::deque<double> E_queue(MA_SIZE, 0.0); // first element = oldest, last = most recent
-std::deque<ENU> Pose_queue(MA_SIZE); // first element = oldest, last = most recent
+std::deque<double> N_queue(MA_SIZE-1, 0.0); // first element = oldest, last = most recent
+std::deque<double> E_queue(MA_SIZE-1, 0.0); // first element = oldest, last = most recent
+std::deque<ENU> Pose_queue(MA_SIZE-1); // first element = oldest, last = most recent
+std::deque<std_msgs::Header> Header_queue(MA_SIZE-1); // first element = oldest, last = most recent
 
 
 // https://en.wikipedia.org/wiki/Circular_mean
 double MovingAverage( std::deque<double> const &q){
     double sum = 0.0;
-    // ROS_INFO("New MA");
    
 
     for (int i = 0; i < q.size(); i++) {
@@ -58,7 +58,7 @@ double MovingAverage( std::deque<double> const &q){
 }
 
 double SimpleEstimator(){
-
+    
     return atan2( MovingAverage(N_queue), MovingAverage(E_queue)) ;
 
 }
@@ -247,8 +247,23 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
 
     nav_msgs::Odometry data;
     data.header=msg->header;
+
+
+    // we try to "backport" the seq id and headerstamp, hopefully rviz
+    // will accept it and synchronoize the "old" pose with the pointcloud????
+    Header_queue.push_back(msg->header); // fill header queue
+    int pointer = (Header_queue.size()) - 2;
+    int que_pos = std::max(  pointer, 0);
+    data.header.seq=Header_queue[que_pos].seq; 
+    data.header.stamp=Header_queue[que_pos].stamp;
+    Header_queue.pop_front();
+
+
+    // run of the mill assignment for various stuff
+    data.header.seq=data.header.seq-1;
     data.header.frame_id= "world";
     data.child_frame_id = "gps_transceiver";
+
     // ECEF to NED
     ENU actualENU = ECEFtoENU(*initFix,lat,lon,newPos); // NED at t
     actualENU.timestamp=msg->header.stamp; // the NED positione was "acquired" at the same time of the Fix
