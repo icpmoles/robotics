@@ -45,7 +45,7 @@ int main(int argc, char** argv){
   nh_private.getParam("child_frame", child_f);
   topic = "input_odom";
 
-  ros::Subscriber sub = nh.subscribe<nav_msgs::Odometry>(topic, 10,boost::bind(poseCallback, _1, root_f, child_f));
+  ros::Subscriber sub = nh.subscribe<nav_msgs::Odometry>(topic, 2,boost::bind(poseCallback, _1, root_f, child_f));
   
   ros::spin();
   return 0;

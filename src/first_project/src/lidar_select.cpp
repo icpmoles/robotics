@@ -37,7 +37,7 @@ int main(int argc, char** argv){
   // we get the parameters of the topic to subscribe to
   ros::NodeHandle nh_private("~"); // this is a private node handle
   std::string root_f, child_f;
-  ros::Publisher laser_pub = nh.advertise<sensor_msgs::PointCloud2>("/pointcloud_remapped", 5);
+  ros::Publisher laser_pub = nh.advertise<sensor_msgs::PointCloud2>("/pointcloud_remapped", 2);
   // dyn conf handles
   dynamic_reconfigure::Server<first_project::dynparametersConfig> server;
   dynamic_reconfigure::Server<first_project::dynparametersConfig>::CallbackType f;
@@ -46,7 +46,7 @@ int main(int argc, char** argv){
   server.setCallback(f);
 
 
-  ros::Subscriber sub = nh.subscribe<sensor_msgs::PointCloud2>("os_cloud_node/points", 10,boost::bind(filterCallBack, _1, laser_pub));
+  ros::Subscriber sub = nh.subscribe<sensor_msgs::PointCloud2>("os_cloud_node/points", 2,boost::bind(filterCallBack, _1, laser_pub));
   
   ros::spin();
   return 0;

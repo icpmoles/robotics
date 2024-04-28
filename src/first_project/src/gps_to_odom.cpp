@@ -315,7 +315,7 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     
     // if we don't move much in the refresh window it's hard to estimate the heading becuase of the uncertinty of the GPS, 
     // so we just use the previous heading and stick with it
-    if (initialHeadingEstimated) { //(delta_space>0.01){ 
+    if (delta_space>0.01){  // (initialHeadingEstimated) { // 
         
         // calculate MovingAverage
         // yaw_est = atan2( MovingAverage(N_queue), MovingAverage(E_queue)) ; // - heading_zero;
@@ -435,8 +435,15 @@ int main(int argc, char **argv){
     }
 
     
-    // starting NED position, it's going to be updated through the execution
-    ENU prevPoistion;
+    // starting ENU position, it's going to be updated through the execution
+    ENU prevPoistion = {    
+        .N = 0.0,
+        .E = 0.0,
+        .U = 0.0,
+        .timestamp = ros::Time::now(), 
+        .Y = 0.0,
+        };
+    
 
     ros::Publisher odom_pub = nh.advertise<nav_msgs::Odometry>("gps_odom", 1);
     // subscribe to gps data
