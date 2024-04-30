@@ -219,9 +219,10 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
                     ECEF *initFix,
                     ENU *prevPo)
 {
-    
-    bool useENUframe = false;
+    // flags
+    bool useENUframe = true;
     bool logging = false;
+    bool new_algo = false; // i tried implementing a more sophisticated algo, it didn't work. keep it false
     //print out the received lat
     // ROS_INFO("Latitude: [%f]", msg->latitude); 
     // in deg as provided by the GPS fix then they are converted in radians
@@ -230,7 +231,7 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     double alt = msg->altitude *PI/180;
     // gps to ECEF
     ECEF newPos = gpsToECEF(lat, lon, alt);
-    bool new_algo = false; // i tried implementing a more sophisticated algo, it didn't work. keep it false
+    
     
     if (*toInit==true) {
         ROS_INFO("Initializing Datum");
@@ -288,7 +289,7 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
     // if we don't have an initial heading estimation and we just got out
     // from a circle of radius 0.3m we don't initialize the initialHeading
     // 
-    if ( (!initialHeadingEstimated) && (sqrt(actualENU.N*actualENU.N + actualENU.E*actualENU.E) > 0.3) ) { 
+    if ( !useENUframe && (!initialHeadingEstimated) && (sqrt(actualENU.N*actualENU.N + actualENU.E*actualENU.E) > 0.3) ) { 
         initialHeadingEstimated = true;
         heading_zero = atan2(actualENU.N,actualENU.E);
     }
