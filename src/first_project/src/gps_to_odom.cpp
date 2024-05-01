@@ -220,9 +220,14 @@ void gpsCallback(   const sensor_msgs::NavSatFix::ConstPtr& msg,
                     ENU *prevPo)
 {
     // flags
-    bool useENUframe = true;
+    bool useENUframe = true; // tries to calculate the heading at the start and uses it  to align wheel odometry and gps odometry
+    // it only works if the node is already running near the start of the bag
+
     bool logging = false;
     bool new_algo = false; // i tried implementing a more sophisticated algo, it didn't work. keep it false
+    // uses a circumference approximation to predict the heading, causes problems on straight trajectories (slight bias of around 20deg).
+
+
     //print out the received lat
     // ROS_INFO("Latitude: [%f]", msg->latitude); 
     // in deg as provided by the GPS fix then they are converted in radians
