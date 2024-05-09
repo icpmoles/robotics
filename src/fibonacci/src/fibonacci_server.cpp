@@ -1,29 +1,36 @@
 #include <ros/ros.h>
+// generic action libs
 #include <actionlib/server/simple_action_server.h>
+// generated from .action file
 #include <actionlib_tutorials/FibonacciAction.h>
 
 class FibonacciAction
 {
 private:
   ros::NodeHandle nh_;
-  actionlib::SimpleActionServer<actionlib_tutorials::FibonacciAction> as_; 
+  // FibonacciAction pointer to itself???
+  actionlib::SimpleActionServer<actionlib_tutorials::FibonacciAction> as_; // action lib server
   std::string action_name_;
   // create messages that are used to published feedback/result
+  // just custom messags at the end
+
   actionlib_tutorials::FibonacciFeedback feedback_;
   actionlib_tutorials::FibonacciResult result_;
 
 public:
-
+  // executeCB = actual callback, this is just a dispatcher of sort
   FibonacciAction(std::string name) :
-    as_(nh_, name, boost::bind(&FibonacciAction::executeCB, this, _1), false),
+    as_(nh_, name, boost::bind(&FibonacciAction::executeCB, this, _1), false), // autostart false
     action_name_(name)
   {
-    as_.start();
+    as_.start(); // we start it manually
   }
 
   ~FibonacciAction(void)
   {
   }
+
+
 
   void executeCB(const actionlib_tutorials::FibonacciGoalConstPtr &goal)
   {
@@ -35,6 +42,8 @@ public:
     feedback_.sequence.clear();
     feedback_.sequence.push_back(0);
     feedback_.sequence.push_back(1);
+    // feeback is just an array in .action
+
 
     // publish info to the console for the user
     ROS_INFO("%s: Executing, creating fibonacci sequence of order %i with seeds %i, %i", action_name_.c_str(), goal->order, feedback_.sequence[0], feedback_.sequence[1]);

@@ -5,6 +5,8 @@
 
 typedef actionlib::SimpleActionClient<actionlib_tutorials::FibonacciAction> Client;
 
+
+// standard notation placeholders for donecb when being called as callback
 void doneCb(const actionlib::SimpleClientGoalState& state,
             const actionlib_tutorials::FibonacciResultConstPtr& result) {
     ROS_INFO("Finished in state [%s]", state.toString().c_str());
@@ -19,11 +21,17 @@ void activeCb() {
     ROS_INFO("Goal just went active");
 }
 
+
+
 void feedbackCb(const actionlib_tutorials::FibonacciFeedbackConstPtr& feedback) {
     ROS_INFO("Got Feedback of length %lu", feedback->sequence.size());
 }
 
+
+// timer callback is capable of stopping the action by using the client action handler passed to the callback, smart
 void preemptTimerCallback(const ros::TimerEvent&, Client* client) {
+
+    // check if server is still "active"
     if (client->getState() == actionlib::SimpleClientGoalState::ACTIVE ||
         client->getState() == actionlib::SimpleClientGoalState::PENDING) {
         ROS_INFO("Preempting the current goal due to timeout.");
@@ -47,6 +55,9 @@ int main (int argc, char **argv) {
     nh.param("duration", duration, 5.0); // Retrieve duration if specified in parameters
 
     goal.order = order;
+// all the same up until here
+
+// nb multiple callbacks: called at different moment during execution
     client.sendGoal(goal, &doneCb, &activeCb, &feedbackCb);
 
     // Setup a timer to preempt the goal after the specified duration
@@ -54,6 +65,8 @@ int main (int argc, char **argv) {
 
     ros::Rate loop_rate(1);
 
+
+// dummy loop, this is to emulate an async processing of server
     while (ros::ok()){
 	      ROS_INFO("doing other processing");
         ros::spinOnce();

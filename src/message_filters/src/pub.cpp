@@ -21,15 +21,19 @@ int main(int argc, char **argv){
 	    
 		geometry_msgs::Vector3Stamped msg1;
 		geometry_msgs::Vector3Stamped msg2;
-		
-		msg1.header.stamp = ros::Time::now();
+		 // always insert timestamp when sending a message to a filter, some filters don't like it otherwise
+		 // use stamped messages when possible
+
+		msg1.header.stamp = ros::Time::now(); 
 		msg1.header.frame_id = "f1";
 		msg1.vector.x = 1;
 		msg1.vector.y = 1;
 		msg1.vector.z = 1;
 		
 		
-		msg2.header.stamp = ros::Time::now();
+		msg2.header.stamp = ros::Time::now(); // slightly different timestamp
+
+		// msg2.header.stamp = msg1.header.stamp; // identical timestamp casae
 		msg2.header.frame_id = "f2";
 		msg2.vector.x = 2;
 		msg2.vector.y = 2;
@@ -37,14 +41,14 @@ int main(int argc, char **argv){
 
 
 
-    		pub1.publish(msg1);
-    		pub2.publish(msg2);
-    		ROS_INFO ("Publishing message");
+		pub1.publish(msg1);
+		pub2.publish(msg2);
+		ROS_INFO ("Publishing message");
 
-    		ros::spinOnce();
+		ros::spinOnce();
 
-    		loop_rate.sleep();
-    		++count;
+		loop_rate.sleep();
+		++count;
   	}
 
 

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>message_filters_example</name>
+  <name>message_filters_eg</name>
   <version>0.0.0</version>
   <description>The pub_sub package</description>
 

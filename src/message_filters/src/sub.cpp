@@ -1,6 +1,6 @@
-
 #include "ros/ros.h"
 #include "geometry_msgs/Vector3Stamped.h"
+// mesage filter libs
 #include <message_filters/subscriber.h>
 #include <message_filters/time_synchronizer.h>
 
@@ -17,9 +17,16 @@ int main(int argc, char** argv)
 
   ros::NodeHandle n;
 
+
+// we create subscribers, little different than normal: message_filters subscriber
   message_filters::Subscriber<geometry_msgs::Vector3Stamped> sub1(n, "topic1", 1);
   message_filters::Subscriber<geometry_msgs::Vector3Stamped> sub2(n, "topic2", 1);
+
+  // we create time synchronizer
+  // <type first message, type second message> sync (mfsubscriber 1 , mf subscriber 2, queue size)
   message_filters::TimeSynchronizer<geometry_msgs::Vector3Stamped, geometry_msgs::Vector3Stamped> sync(sub1, sub2, 10);
+
+  // register &callback to synchronizer with 2 placeholders
   sync.registerCallback(boost::bind(&callback, _1, _2));
 
   ros::spin();

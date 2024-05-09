@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(message_filters_example)
+project(message_filters_eg)
 
 ## Find catkin and any catkin packages
 find_package(catkin REQUIRED COMPONENTS roscpp std_msgs geometry_msgs message_filters)

@@ -20,10 +20,15 @@ int main(int argc, char** argv)
   message_filters::Subscriber<geometry_msgs::Vector3Stamped> sub1(n, "topic1", 1);
   message_filters::Subscriber<geometry_msgs::Vector3Stamped> sub2(n, "topic2", 1);
   
+  //we can create policies:
+
+  // from non _pol case, limited cases like stereo vision
   //typedef message_filters::sync_policies::ExactTime<geometry_msgs::Vector3Stamped, geometry_msgs::Vector3Stamped> MySyncPolicy;
+
+  // aproximate time built into ros, good for close enough sync
   typedef message_filters::sync_policies::ApproximateTime<geometry_msgs::Vector3Stamped, geometry_msgs::Vector3Stamped> MySyncPolicy;
   
-  
+  // we pass the policy
   message_filters::Synchronizer<MySyncPolicy> sync(MySyncPolicy(10), sub1, sub2);
   sync.registerCallback(boost::bind(&callback, _1, _2));
 
