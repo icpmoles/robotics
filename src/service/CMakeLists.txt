@@ -22,10 +22,10 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 
 add_executable(add_two_int src/add_two_int.cpp)
 target_link_libraries(add_two_int ${catkin_LIBRARIES})
-add_dependencies(add_two_int ${catkin_EXPORTED_TARGETS})
+add_dependencies(add_two_int ${catkin_EXPORTED_TARGETS}  service_generate_messages_cpp)
 
 
 add_executable(client src/client.cpp)
 target_link_libraries(client ${catkin_LIBRARIES})
-add_dependencies(client ${catkin_EXPORTED_TARGETS})
+add_dependencies(client ${catkin_EXPORTED_TARGETS} service_generate_messages_cpp)
 
