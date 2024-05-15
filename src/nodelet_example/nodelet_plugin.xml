@@ -1,0 +1,9 @@
+<library path="lib/libnodelet_example">
+  <class name="nodelet_example::ProducerNodelet" type="nodelet_example::ProducerNodelet" base_class_type="nodelet::Nodelet">
+    <description>This is a producer nodelet that publishes random integers.</description>
+  </class>
+  <class name="nodelet_example::ConsumerNodelet" type="nodelet_example::ConsumerNodelet" base_class_type="nodelet::Nodelet">
+    <description>This is a consumer nodelet that subscribes to integers and prints them.</description>
+  </class>
+</library>
+

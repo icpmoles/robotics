@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>nodelet_example</name>
+  <version>0.0.1</version>
+  <description>This package contains an example of a Producer and Consumer nodelet.</description>
+
+  <maintainer email="your_email@example.com">Your Name</maintainer>
+  <license>BSD</license>
+
+  <!-- Specify dependencies on other catkin packages -->
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>nodelet</build_depend>
+  <build_depend>std_msgs</build_depend>
+
+  <build_export_depend>roscpp</build_export_depend>
+  <build_export_depend>nodelet</build_export_depend>
+  <build_export_depend>std_msgs</build_export_depend>
+
+  <exec_depend>roscpp</exec_depend>
+  <exec_depend>nodelet</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+
+  <!-- Information for exporting this package's nodelets via pluginlib -->
+  <export>
+    <nodelet plugin="${prefix}/nodelet_plugin.xml"/>
+  </export>
+</package>
