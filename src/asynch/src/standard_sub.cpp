@@ -3,7 +3,7 @@
 void callbackTalker1(const std_msgs::String::ConstPtr &msg)
 {
     ROS_INFO_STREAM("Message from callback 1:" );
-    ros::Duration(2.0).sleep();
+    ros::Duration(2.0).sleep();  // simulate long processing
     ROS_INFO("%s", msg->data.c_str());
 }
 

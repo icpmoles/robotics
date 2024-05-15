@@ -11,6 +11,8 @@ int main(int argc, char **argv){
 
 	ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter",  1, true);
 
+	// latched publisher:  true at the end after the buffer size
+
 	ros::Rate loop_rate(0.05);
 
 	int count = 0;

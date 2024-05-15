@@ -3,6 +3,9 @@
 #include <std_msgs/Int32.h>
 #include <pluginlib/class_list_macros.h>
 
+// nodelets == aggregates multiple nodes functionality in one simple node that doesn't
+// comunicate through the ros network, but instead comunicate through shared memory.
+
 namespace nodelet_example {
 
 class ProducerNodelet : public nodelet::Nodelet

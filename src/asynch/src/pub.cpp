@@ -13,7 +13,7 @@ int main(int argc, char **argv){
 	ros::Publisher chatter_pub2 = n.advertise<std_msgs::String>("talker2",  1);
 
 	ros::Rate loop_rate(3.0);
-
+// standard publisher, nothing too crazy
  	std_msgs::String msg1;
  	std_msgs::String msg2;
 
