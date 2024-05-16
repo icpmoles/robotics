@@ -19,7 +19,7 @@ define turtlebot position
   
   localization "odom"
 
-
+# variance of noise
   odom_error [0.2 0.2 0.0 0.3 ]
 
   size [ 0.2552 0.2552 0.40 ]

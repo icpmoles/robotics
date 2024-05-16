@@ -2,6 +2,7 @@
 
   <node pkg="gmapping" type="slam_gmapping" name="gmapping" output="screen">
     <remap from="scan" to="base_scan" />
+    <!-- gmapping subscribes to a specfic topic, we simply remap -->
   </node>
 
 </launch>
