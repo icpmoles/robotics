@@ -2,10 +2,8 @@
 #include <std_msgs/String.h>
 void callbackTalker1(const std_msgs::String::ConstPtr &msg)
 {
-
     ros::Duration(2.0).sleep(); // simulate long processing
     ROS_INFO_STREAM("Message from callback 1:" );
-    
     ROS_INFO("%s", msg->data.c_str());
 }
 
