@@ -1,8 +1,7 @@
 <launch>
 
   <node pkg="slam_toolbox" type="async_slam_toolbox_node" name="slam_toolbox" output="screen">
-    <rosparam command="load" file="$(find slam_toolbox)/config/mapper_params_online_async.yaml" />
-    <remap from="scan" to="base_scan" />
+    <rosparam command="load" file="$(find demo_mapping)/config/mapper_params_online_async.yaml" />
   </node>
 
 </launch>

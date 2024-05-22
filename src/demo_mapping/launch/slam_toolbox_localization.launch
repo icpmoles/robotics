@@ -1,0 +1,9 @@
+<launch>
+
+  <node pkg="slam_toolbox" type="async_slam_toolbox_node" name="slam_toolbox" output="screen">
+    <rosparam command="load" file="$(find demo_mapping)/config/mapper_params_online_async_localization.yaml" />
+    <param name="map_file_name" value="$(find demo_mapping)/maps/st_map"/>
+    <param name="mode" value="localization"/>
+  </node>
+
+</launch>
