@@ -14,16 +14,16 @@ kobuki_hexagons_kinect kobuki_hexagons_r200 roomba_circles_asus_xtion_pro roomba
   <arg name="global_frame_id" default="map"/>
 
   <param name="/use_sim_time" value="true"/>
+  <!-- to use in the final project, to avoid mismatch for timestamp during rosbag replay -->
 
-
- <!--  ***************** Robot simulation *****************  -->
+<!--  ***************** Robot simulation *****************  -->
   <node pkg="stage_ros" type="stageros" name="stageros" args="$(arg world_file)">
     <param name="base_watchdog_timeout" value="0.5"/>
     <remap from="base_scan" to="scan"/>
   </node>
 
 
-  <!--  ***************** Robot Model *****************  -->
+<!--  ***************** Robot Model *****************  -->
   <include file="$(find turtlebot3_bringup)/launch/includes/description.launch.xml">
     <arg name="model" value="$(arg base)" />
   </include>
@@ -32,7 +32,7 @@ kobuki_hexagons_kinect kobuki_hexagons_r200 roomba_circles_asus_xtion_pro roomba
   </node>
 
 
-  <!--  ************** Navigation  ***************  -->
+<!--  ************** Navigation  ***************  -->
    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
     <rosparam file="$(find nav2d_conf)/cfg/costmap_common_params.yaml" command="load" ns="global_costmap" />
     <rosparam file="$(find nav2d_conf)/cfg/costmap_common_params.yaml" command="load" ns="local_costmap" />   
@@ -41,7 +41,8 @@ kobuki_hexagons_kinect kobuki_hexagons_r200 roomba_circles_asus_xtion_pro roomba
     <rosparam file="$(find nav2d_conf)/cfg/dwa_local_planner_params.yaml" command="load" />
     <rosparam file="$(find nav2d_conf)/cfg/move_base_params.yaml" command="load" /> 
 
-    <param name="base_global_planner" value="navfn/NavfnROS" />  <!--   planner  navfn/NavfnROS alternative  carrot_planner/CarrotPlanner -->
+    <param name="base_global_planner" value="navfn/NavfnROS" />  <!--   planner  navfn/NavfnROS alternative  carrot_planner/CarrotPlanner  -->
+    <!-- alternative planner if you want to try -->
     <param name="planner_frequency" value="1.0" />
     <param name="planner_patience" value="5.0" /> <!-- How long the planner will wait in seconds in an attempt to find a valid plan before space-clearing operations are performed.  -->
 
@@ -53,13 +54,13 @@ kobuki_hexagons_kinect kobuki_hexagons_r200 roomba_circles_asus_xtion_pro roomba
   </node>
 
 
-  <!--  ****** Maps *****  -->
+<!--  ****** Maps *****  -->
   <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)">
     <param name="frame_id" value="map"/>
   </node>
 
 
-  <!--  ****** amcl *****  -->
+<!--  ****** amcl *****  -->
   <include file="$(find nav2d_conf)/launch/amcl.launch.xml">
     <arg name="scan_topic" value="scan"/>
     <arg name="use_map_topic" value="true"/>
@@ -69,6 +70,6 @@ kobuki_hexagons_kinect kobuki_hexagons_r200 roomba_circles_asus_xtion_pro roomba
   </include>
 
 
-  <!--  **************** Visualisation ****************  -->
+<!--  **************** Visualisation ****************  -->
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find nav2d_conf)/rviz/robot_navigation.rviz"/>
 </launch>
