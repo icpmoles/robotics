@@ -1,6 +1,6 @@
 <launch>
 <param name="/use_sim_time" value="true"/>
- <node pkg="rosbag" type="play" name="loop_autol" args="--clock /home/polimi/robotics/src/bags/robotics2.bag -r 1" required="true" output="screen"></node>
+ <node pkg="rosbag" type="play" name="loop_autol" args="--clock /home/polimi/robotics/src/bags/robotics2.bag -r 1" required="false" output="screen"></node>
 
 <node pkg="second_project" name="wheel_o2t" type="odometry_to_tf" >
   <remap to="/ugv/odom" from="/input_odom"/>
