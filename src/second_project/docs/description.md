@@ -14,5 +14,7 @@ for nav inside map:
 put corrrect size of robot
 from rviz receive goals and move in the map gen in task 1
 
+gymansium inverted pole
+deadline: 23/07/2024
 
 https://drive.google.com/drive/folders/1W36wPi0H7kA7qYGiOfbyR5ikBASlyCpZ
