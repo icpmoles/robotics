@@ -12,7 +12,7 @@
             "command": "catkin_make",
             "group": "test",
             "presentation": {
-                "reveal": "never",
+                "reveal": "always",
                 "panel": "dedicated",
                 "revealProblems": "onProblem"
             },
@@ -45,9 +45,23 @@
             }
         },
         {
-            "label": "build ROS code and launch",
+            "label": "build ROS code and launch task 1",
             "type": "shell",
-            "command": "catkin_make && roslaunch first_project auto.launch",
+            "command": "catkin_make && roslaunch second_project task1.launch",
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "revealProblems": "onProblem"
+            },
+            "problemMatcher": [],
+            "runOptions": {
+                "instanceLimit": 1
+            }
+        },{
+            "label": "build ROS code and launch task 2",
+            "type": "shell",
+            "command": "catkin_make && roslaunch second_project task2.launch",
             "group": "test",
             "presentation": {
                 "reveal": "always",
@@ -90,9 +104,9 @@
             }
         },
         {
-            "label": "rviz",
+            "label": "rviz lidar",
             "type": "shell",
-            "command": "rviz -d /home/polimi/robotics/src/first_project/lidar.rviz",
+            "command": "rviz -d /home/polimi/robotics/src/second_project/lidar.rviz",
             "group": "test",
             "presentation": {
                 "reveal": "always",

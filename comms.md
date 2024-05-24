@@ -14,5 +14,5 @@ rosrun stage_ros stageros maze.world
 rosrun teleop_twist_keyboard teleop_twist_keyboard.py
 
 -> panels -> slam toolbox panel -> serialize $path
-
+/ugv/rslidar_points
 #

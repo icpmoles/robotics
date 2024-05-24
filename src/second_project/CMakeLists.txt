@@ -9,10 +9,10 @@ project(second_project)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  rospy
   std_msgs
+  tf
+  # dynamic_reconfigure
 )
-
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -134,6 +134,29 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/second_project_node.cpp)
+
+###############
+# Odom2tf Node ##
+###############
+add_executable(
+  odometry_to_tf src/odom_to_tf.cpp
+)
+
+target_link_libraries(odometry_to_tf
+  ${catkin_LIBRARIES}
+)
+
+
+###############
+#tf change Node ##
+###############
+add_executable(
+  swap_tf src/tf_change.cpp
+)
+
+target_link_libraries(swap_tf
+  ${catkin_LIBRARIES}
+)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
