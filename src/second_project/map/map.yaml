@@ -1,4 +1,4 @@
-image: map.pgm
+image: map_cleaned.pgm
 resolution: 0.050000
 origin: [-4.235468, -11.098021, 0.000000]
 negate: 0

@@ -18,7 +18,7 @@ void poseCallback(const nav_msgs::Odometry::ConstPtr& msg,
   //   tf::StampedTransform [3]
     geometry_msgs::Point cart_position =  msg->pose.pose.position;
     geometry_msgs::Quaternion cart_heading  = msg->pose.pose.orientation;
-    odomtobasefootprint.setOrigin( tf::Vector3(cart_position.x, cart_position.y, 0.0) );
+    odomtobasefootprint.setOrigin( tf::Vector3(cart_position.x, cart_position.y, cart_position.z) );
     tf::Quaternion q;
     q.setW(cart_heading.w);
     q.setX(cart_heading.x);
