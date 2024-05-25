@@ -6,13 +6,10 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /TF1
         - /TF1/Frames1
         - /TF1/Tree1
-        - /LaserScan1
         - /Map1/Position1
         - /Map1/Orientation1
-        - /PointCloud21
       Splitter Ratio: 0.6618005037307739
     Tree Height: 643
   - Class: rviz/Selection
@@ -75,25 +72,7 @@ Visualization Manager:
       Update Interval: 0
       Value: true
     - Alpha: 0.5
-      Cell Size: 4
-      Class: rviz/Grid
-      Color: 160; 160; 164
-      Enabled: true
-      Line Style:
-        Line Width: 0.029999999329447746
-        Value: Lines
-      Name: Grid
-      Normal Cell Count: 0
-      Offset:
-        X: 0
-        Y: 0
-        Z: 0
-      Plane: XY
-      Plane Cell Count: 10
-      Reference Frame: <Fixed Frame>
-      Value: true
-    - Alpha: 0.5
-      Cell Size: 1
+      Cell Size: 5
       Class: rviz/Grid
       Color: 160; 160; 164
       Enabled: true
@@ -111,6 +90,24 @@ Visualization Manager:
       Reference Frame: <Fixed Frame>
       Value: true
     - Alpha: 1
+      Cell Size: 0.6000000238418579
+      Class: rviz/Grid
+      Color: 255; 88; 255
+      Enabled: true
+      Line Style:
+        Line Width: 0.029999999329447746
+        Value: Lines
+      Name: scoutfootprint
+      Normal Cell Count: 0
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Plane: XY
+      Plane Cell Count: 1
+      Reference Frame: base_footprint
+      Value: true
+    - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
         Max Value: 10
@@ -119,7 +116,7 @@ Visualization Manager:
       Axis: Z
       Channel Name: intensity
       Class: rviz/LaserScan
-      Color: 255; 0; 127
+      Color: 255; 170; 127
       Color Transformer: FlatColor
       Decay Time: 0
       Enabled: true
@@ -149,7 +146,7 @@ Visualization Manager:
       Use Timestamp: false
       Value: true
     - Alpha: 0.20000000298023224
-      Autocompute Intensity Bounds: true
+      Autocompute Intensity Bounds: false
       Autocompute Value Bounds:
         Max Value: 10
         Min Value: -10
@@ -161,9 +158,11 @@ Visualization Manager:
       Color Transformer: Intensity
       Decay Time: 0
       Enabled: true
-      Invert Rainbow: false
+      Invert Rainbow: true
       Max Color: 255; 255; 255
+      Max Intensity: 255
       Min Color: 0; 0; 0
+      Min Intensity: 1
       Name: PointCloud2
       Position Transformer: XYZ
       Queue Size: 10
@@ -204,7 +203,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/ThirdPersonFollower
-      Distance: 23.900192260742188
+      Distance: 29.000019073486328
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -212,17 +211,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 9.804313659667969
-        Y: -6.696498870849609
-        Z: 3.7767869798699394e-05
+        X: 8.974658012390137
+        Y: -6.130558490753174
+        Z: 4.2536241380730644e-05
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.7447965145111084
+      Pitch: 1.234797477722168
       Target Frame: world
-      Yaw: 4.3785858154296875
+      Yaw: 4.633594512939453
     Saved: ~
 Window Geometry:
   Displays:

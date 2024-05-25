@@ -2,11 +2,11 @@ define kinect ranger
 (
   sensor
   (
-    pose [ -0.1 0.0 -0.11 0.0 ]
+    pose [ 0.0 0.0 -0.11 0.0 ]
     size [0.1 0.1 0.1 ]
-    range  [0 6.5]
-    fov 120.0
-    samples 640
+    range  [0 10]
+    fov 360.0
+    samples 720
   )
   # generic model properties
   color "black"
@@ -22,10 +22,10 @@ define scout position
 # variance of noise
   odom_error [0.2 0.2 0.0 0.3 ]
 
-  size [ 0.2552 0.2552 0.40 ]
+  size [ 0.612 0.580 0.40 ]
   origin [ 0.0 0.0 0.0 0.0 ]
   gui_nose 1
-  drive "diff"
+  drive "omni"
   color "grey"
   
   kinect()

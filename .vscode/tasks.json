@@ -61,7 +61,7 @@
         },{
             "label": "build ROS code and launch task 2",
             "type": "shell",
-            "command": "catkin_make && roslaunch second_project task2.launch",
+            "command": "catkin_make && roslaunch second_project task2_amcl.launch",
             "group": "test",
             "presentation": {
                 "reveal": "always",
