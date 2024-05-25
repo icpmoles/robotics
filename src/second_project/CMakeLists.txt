@@ -11,7 +11,9 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   tf
-  # dynamic_reconfigure
+  actionlib
+  actionlib_msgs
+  
 )
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -67,6 +69,13 @@ find_package(catkin REQUIRED COMPONENTS
 #   Action2.action
 # )
 
+## Generate actions in the 'action' folder
+add_action_files(
+  DIRECTORY action
+  FILES Slam.action
+)
+
+
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
@@ -102,11 +111,19 @@ find_package(catkin REQUIRED COMPONENTS
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
+## Generate added messages and services with any dependencies listed here
+generate_messages(
+  DEPENDENCIES actionlib_msgs std_msgs  # Or other packages containing msgs
+)
+
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES second_project
 #  CATKIN_DEPENDS roscpp rospy std_msgs
 #  DEPENDS system_lib
+
+  CATKIN_DEPENDS actionlib_msgs
+
 )
 
 ###########
@@ -148,13 +165,14 @@ target_link_libraries(odometry_to_tf
 
 
 ###############
-#tf change Node ##
+#tf goal action node ##
 ###############
+
 add_executable(
-  swap_tf src/tf_change.cpp
+  goal_pub src/goalpub.cpp
 )
 
-target_link_libraries(swap_tf
+target_link_libraries(goal_pub
   ${catkin_LIBRARIES}
 )
 

@@ -56,6 +56,6 @@
 
 
   <!--  **************** Visualisation ****************  -->
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find second_project)/lidar2.rviz"/>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find second_project)/lidar2st.rviz"/>
 </launch>
 

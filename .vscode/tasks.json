@@ -59,9 +59,24 @@
                 "instanceLimit": 1
             }
         },{
-            "label": "build ROS code and launch task 2",
+            "label": "build ROS code and launch task 2 amcl",
             "type": "shell",
             "command": "catkin_make && roslaunch second_project task2_amcl.launch",
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "revealProblems": "onProblem"
+            },
+            "problemMatcher": [],
+            "runOptions": {
+                "instanceLimit": 1
+            }
+        },
+        {
+            "label": "build ROS code and launch task 2 slam toolbox",
+            "type": "shell",
+            "command": "catkin_make && roslaunch second_project task2_st.launch",
             "group": "test",
             "presentation": {
                 "reveal": "always",

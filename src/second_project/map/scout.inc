@@ -6,7 +6,7 @@ define kinect ranger
     size [0.1 0.1 0.1 ]
     range  [0 12]
     fov 360.0
-    samples 720
+    samples 360
   )
   # generic model properties
   color "black"
@@ -20,7 +20,7 @@ define scout position
   localization "odom"
 
 # variance of noise
-  odom_error [0.1 0.1 0.0 0.1 ]
+  odom_error [0.03 0.03 0.0 0.05 ]
 
   size [ 0.612 0.580 0.40 ]
   origin [ 0.0 0.0 0.0 0.0 ]

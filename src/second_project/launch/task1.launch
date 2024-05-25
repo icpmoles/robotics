@@ -25,7 +25,9 @@
 
 <node pkg="pointcloud_to_laserscan" name="pc2ls" type="pointcloud_to_laserscan_node" >
   <remap to="/ugv/rslidar_points" from="/cloud_in"/>
-  <!-- <param name="max_height" value="0.5" /> -->
+  <param name="max_height" value="0.5" /> 
+  <param name="range_max" value="5.5" /> 
+  
 </node>
 
 <node type="rviz" name="rviz" pkg="rviz"  args="-d  $(find second_project)/lidar.rviz" ></node> 
