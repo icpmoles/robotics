@@ -8,6 +8,8 @@ Panels:
         - /Status1
         - /TF1/Frames1
         - /TF1/Tree1
+        - /PoseArray1
+        - /goalpose1
       Splitter Ratio: 0.6618005037307739
     Tree Height: 708
   - Class: rviz/Selection
@@ -240,7 +242,7 @@ Visualization Manager:
       Topic: /move_base/NavfnROS/plan
       Unreliable: false
       Value: true
-    - Alpha: 1
+    - Alpha: 0.20000000298023224
       Arrow Length: 0.30000001192092896
       Axes Length: 0.30000001192092896
       Axes Radius: 0.009999999776482582
@@ -255,6 +257,22 @@ Visualization Manager:
       Shaft Radius: 0.009999999776482582
       Shape: Arrow (Flat)
       Topic: /particlecloud
+      Unreliable: false
+      Value: true
+    - Alpha: 1
+      Axes Length: 1
+      Axes Radius: 0.10000000149011612
+      Class: rviz/Pose
+      Color: 0; 0; 0
+      Enabled: true
+      Head Length: 0.30000001192092896
+      Head Radius: 0.10000000149011612
+      Name: goalpose
+      Queue Size: 10
+      Shaft Length: 1
+      Shaft Radius: 0.05000000074505806
+      Shape: Arrow
+      Topic: /move_base_simple/goal
       Unreliable: false
       Value: true
   Enabled: true
@@ -294,7 +312,7 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Scale: 57.98884201049805
+      Scale: 160.8076171875
       Target Frame: world
       X: 1.9581184387207031
       Y: -1.3933154344558716
@@ -317,5 +335,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1908
-  X: 0
-  Y: 0
+  X: -32
+  Y: -32

@@ -4,12 +4,13 @@
 
 std::string child_frame;
 
-
+int i = 0;
 
 void poseCallback(const nav_msgs::Odometry::ConstPtr& msg,
                   std::string rf, std::string cf ) {
 
-     static tf::TransformBroadcaster br;
+    static tf::TransformBroadcaster br;
+    
     tf::Transform odomtobasefootprint;
     tf::Transform basefootprinttobaselink;
     tf::Transform baselinklaser;
@@ -26,7 +27,6 @@ void poseCallback(const nav_msgs::Odometry::ConstPtr& msg,
     q.setZ(cart_heading.z);
     q.normalize();
     odomtobasefootprint.setRotation(q); 
-    br.sendTransform(tf::StampedTransform(odomtobasefootprint, ros::Time::now(), rf, cf));
   //   basetolasertransform.setOrigin( tf::Vector3(0.0, 0.0, 0.03) );  // height of robot is 245mm->24.5mm->0.0245m
   //   basetolasertransform.setRotation( tf::Quaternion(0, 0, 0, 1) );
   //   br.sendTransform(tf::StampedTransform(basetolasertransform, ros::Time::now(), "rslidar", "base_footprint"));
@@ -35,16 +35,28 @@ void poseCallback(const nav_msgs::Odometry::ConstPtr& msg,
 
     basefootprinttobaselink.setOrigin( tf::Vector3(0.0, 0.0, 0.0) );   //attached links for our vehicle
     basefootprinttobaselink.setRotation( tf::Quaternion(0, 0, 0, 1) );
-    br.sendTransform(tf::StampedTransform(basefootprinttobaselink, ros::Time::now(), "base_footprint", "base_link"));
 
 
 
     baselinklaser.setOrigin( tf::Vector3(0.0, 0.0, 0.245) );   //attached links for our vehicle
     basefootprinttobaselink.setRotation( tf::Quaternion(0, 0, 0, 1) );
-    br.sendTransform(tf::StampedTransform(basefootprinttobaselink, ros::Time::now(), "base_link", "rslidar"));
 
+    
+    // br.sendTransform(tf::StampedTransform(odomtobasefootprint, ros::Time::now(), rf, cf));
+    // br.sendTransform(tf::StampedTransform(basefootprinttobaselink, ros::Time::now(), "base_footprint", "base_link"));
+    // br.sendTransform(tf::StampedTransform(basefootprinttobaselink, ros::Time::now(), "base_link", "rslidar"));
 
+    if (i == 0)
+    {br.sendTransform({
+    tf::StampedTransform(odomtobasefootprint, ros::Time::now(), rf, cf),
+    tf::StampedTransform(basefootprinttobaselink, ros::Time::now(), "base_footprint", "base_link"),
+    tf::StampedTransform(basefootprinttobaselink, ros::Time::now(), "base_link", "rslidar")
+    });
+    i++;}
+    else 
+    br.sendTransform(tf::StampedTransform(odomtobasefootprint, ros::Time::now(), rf, cf));
 
+    
 }
 
 int main(int argc, char** argv){

@@ -72,4 +72,6 @@ kobuki_hexagons_kinect kobuki_hexagons_r200 roomba_circles_asus_xtion_pro roomba
 
 <!--  **************** Visualisation ****************  -->
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find second_project)/lidar2.rviz"/>
+  
+  <node pkg="second_project" type="goal_pub" name="goal_pub" output="screen"> </node>
 </launch>

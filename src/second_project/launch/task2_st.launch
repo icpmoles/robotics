@@ -1,4 +1,5 @@
 <launch>
+  <param name="/use_sim_time" value="true"/>
   <arg name="base"       default="burger"/>  <!-- create, rhoomba -->
   
   <!-- Name of the map to use and initial position -->
@@ -7,7 +8,7 @@
   <arg name="odom_frame_id"   default="odom"/>
   <arg name="global_frame_id" default="map"/>
 
-  <param name="/use_sim_time" value="true"/>
+
 
 
  <!--  ***************** Robot simulation *****************  -->
@@ -48,7 +49,7 @@
  <!-- Gmapping -->
   <!-- <include file="$(find second_project)/launch/gmapping.launch.xml"/> -->
  <!-- Slam toolbox -->
-   <node pkg="slam_toolbox" type="async_slam_toolbox_node" name="slam_toolbox" output="screen">
+   <node pkg="slam_toolbox" type="async_slam_toolbox_node" name="slam_toolbox" output="screen" >
     <rosparam command="load" file="$(find second_project)/config/mapper_params_online_async_localization.yaml" />
     <param name="map_file_name" value="$(find second_project)/map/serial"/>
     <param name="mode" value="localization"/>
@@ -57,5 +58,11 @@
 
   <!--  **************** Visualisation ****************  -->
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find second_project)/lidar2st.rviz"/>
+
+
+  
+  <node pkg="second_project" type="goal_pub" name="goal_pub"  output="screen"> 
+   <param name="waypoint_path" value="$(find second_project)/waypoint.csv"/>
+  </node>
 </launch>
 

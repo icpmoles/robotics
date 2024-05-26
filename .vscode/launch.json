@@ -15,6 +15,13 @@
             "preLaunchTask": "make_debug"
         },
         {
+            "name": "ROS: Launch SP ST",
+            "type": "ros",
+            "request": "launch",
+            "target": "${workspaceFolder}/src/second_project/launch/task2_st.launch",
+            "preLaunchTask": "make_debug"
+        },
+        {
             "name": "C/C++: g++-9 build and debug active file",
             "type": "cppdbg",
             "request": "launch",

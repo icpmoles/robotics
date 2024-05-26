@@ -70,10 +70,10 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate actions in the 'action' folder
-add_action_files(
-  DIRECTORY action
-  FILES Slam.action
-)
+# add_action_files(
+#   DIRECTORY action
+#   FILES Slam.action
+# )
 
 
 ## Generate added messages and services with any dependencies listed here
@@ -82,9 +82,9 @@ add_action_files(
 #   std_msgs
 # )
 
-generate_messages(
-  DEPENDENCIES actionlib_msgs std_msgs  # Or other packages containing msgs
-)
+# generate_messages(
+#   DEPENDENCIES actionlib_msgs std_msgs  # Or other packages containing msgs
+# )
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -177,7 +177,7 @@ target_link_libraries(goal_pub
   ${catkin_LIBRARIES}
 )
 
-add_dependencies(goal_pub ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# add_dependencies(goal_pub ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 
 ## Rename C++ executable without prefix
