@@ -15,6 +15,9 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib_msgs
   
 )
+
+
+set (CMAKE_CXX_FLAGS "-lstdc++fs -std=c++17")
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 

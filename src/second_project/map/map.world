@@ -21,7 +21,7 @@ interval_sim 50  # simulation timestep in milliseconds
 
 window
 (
-  size [ 600.0 700.0 ]
+  size [1200.0 700.0 ]
   center [ 0.0 0.0 ]
   rotate [ 0.0 0.0 ]
   scale 60
@@ -30,7 +30,7 @@ window
 floorplan
 (
   name "maze"
-  bitmap "map_cleaned.png"
+  bitmap "map.png"
   size [ 28.45 15.15 1.0 ]
   pose [ 10 -3.6 0.0 0.0 ]
 )

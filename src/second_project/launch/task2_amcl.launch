@@ -2,6 +2,6 @@
 <launch>
   <arg name="base"       default="burger"/>  
   <node pkg="second_project" type="goal_pub" name="goal_pub"  output="screen"> 
-   <param name="waypoint_path" value="$(find second_project)/waypoint.csv"/>
+   <param name="waypoint_path" value="$(find second_project)/waypoints.csv"/>
   </node>
 </launch>

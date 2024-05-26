@@ -18,7 +18,7 @@
             "name": "ROS: Launch SP ST",
             "type": "ros",
             "request": "launch",
-            "target": "${workspaceFolder}/src/second_project/launch/task2_st.launch",
+            "target": "${workspaceFolder}/src/second_project/launch/task2_amcl.launch",
             "preLaunchTask": "make_debug"
         },
         {

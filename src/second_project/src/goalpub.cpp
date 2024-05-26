@@ -6,6 +6,9 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <filesystem>
+
+
 using namespace std;
 
 
@@ -13,24 +16,35 @@ struct simplePose {
     double X, Y, theta;
 };
 
-  vector<simplePose> getList(std::string path){
+vector<simplePose> getList(std::string path){
     
   vector<simplePose> list;
   
-  ROS_INFO("GOALPUB: launch file did find a  CSV in: %s",path.c_str());
+  ROS_INFO("GOALPUB: from launch file expecting a CSV in: %s",path.c_str());
 
   string line;
-  ifstream csvfile ("src/second_project/waypoint.csv");
-  
-  ROS_INFO("GOALPUB: moved on");
-  // myfile.open();
-  // myfile << "Writing this to a file.\n";
+  ifstream csvfile;
+  csvfile.open (path); 
+
   if (csvfile.is_open())
   {
     ROS_INFO("GOALPUB: CSV opened ");
-    while ( getline (csvfile,line) )
+    while ( getline (csvfile,line) ) // reading  line
     {
      ROS_INFO("GOALPUB: line: %s ", line.c_str());
+     
+      stringstream linestream(line); 
+       simplePose e;
+      string xvalue;
+      string yvalue;
+      string tvalue;
+      getline (linestream,xvalue,',');
+      getline (linestream,yvalue,',');
+      getline (linestream,tvalue,',');
+      e.X = std::stof (xvalue);
+      e.Y = std::stof (yvalue);
+      e.theta = std::stof (tvalue);
+      list.push_back(e);
     }
     csvfile.close();
   }
@@ -40,7 +54,7 @@ struct simplePose {
   
   }
 
-
+  ROS_INFO("GOALPUB: CSV fully parsed %i elements", static_cast<int>(list.size()));
 
   csvfile.close();
   return list;
@@ -71,17 +85,19 @@ int main(int argc, char** argv){
   
 	std::string wp_path;
 	nh_private.getParam("waypoint_path", wp_path); //get l
-  std::vector<simplePose> listwp = getList(wp_path);
+  std::vector<simplePose> goal_list = getList(wp_path);
   //tell the action client that we want to spin a thread by default
   MoveBaseClient ac("move_base", true);
   
-  simplePose goal_list[]  =
-  {{ 2.0 , 0.0 , 0.1},
-  { -1.0 , 0.0 , -3.14}
-  } ;
+  // simplePose goal_list[]  =
+  // {{ 2.0 , 0.0 , 0.1},
+  // { -1.0 , 0.0 , -3.14}
+  // } ;
+  
+  // int goal_size = sizeof(goal_list)/sizeof(simplePose);
 
 
-  int goal_size = sizeof(goal_list)/sizeof(simplePose);
+  int goal_size = size(goal_list);
   move_base_msgs::MoveBaseGoal goal;
   
   goal.target_pose.header.frame_id = "map";
