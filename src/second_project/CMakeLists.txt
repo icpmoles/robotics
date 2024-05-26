@@ -82,6 +82,10 @@ add_action_files(
 #   std_msgs
 # )
 
+generate_messages(
+  DEPENDENCIES actionlib_msgs std_msgs  # Or other packages containing msgs
+)
+
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
 ################################################
@@ -112,9 +116,7 @@ add_action_files(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 ## Generate added messages and services with any dependencies listed here
-generate_messages(
-  DEPENDENCIES actionlib_msgs std_msgs  # Or other packages containing msgs
-)
+
 
 catkin_package(
 #  INCLUDE_DIRS include
@@ -145,7 +147,6 @@ include_directories(
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-# add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
@@ -175,6 +176,9 @@ add_executable(
 target_link_libraries(goal_pub
   ${catkin_LIBRARIES}
 )
+
+add_dependencies(goal_pub ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
