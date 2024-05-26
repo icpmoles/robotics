@@ -5,6 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
+        - /TF1
         - /TF1/Frames1
         - /TF1/Tree1
         - /movegoal1
@@ -47,7 +48,7 @@ Visualization Manager:
         base_footprint:
           Value: true
         base_laser_link:
-          Value: false
+          Value: true
         base_link:
           Value: false
         map:
@@ -308,26 +309,20 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Class: rviz/ThirdPersonFollower
-      Distance: 10.457798957824707
+      Angle: 0
+      Class: rviz/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
-      Field of View: 0.7853981852531433
-      Focal Point:
-        X: -0.5569056272506714
-        Y: -3.401907205581665
-        Z: -8.940696716308594e-07
-      Focal Shape Fixed Size: true
-      Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.2203991413116455
-      Target Frame: base_footprint
-      Yaw: 3.3135881423950195
+      Scale: 60.342201232910156
+      Target Frame: map
+      X: 2.9186220169067383
+      Y: -4.095743179321289
     Saved: ~
 Window Geometry:
   Displays:

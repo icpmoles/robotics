@@ -5,7 +5,7 @@ cd ~/.config/ros.org/
 
 23/05/2024 fix, mo more dual vm
 
-
+rosrun rqt_tf_tree rqt_tf_tree
 # L10
 
 cd src/stage

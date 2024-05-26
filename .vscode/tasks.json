@@ -61,7 +61,7 @@
         },{
             "label": "build ROS code and launch task 2 amcl",
             "type": "shell",
-            "command": "catkin_make && roslaunch second_project task2_amcl.launch",
+            "command": "catkin_make && roslaunch second_project task2_st.launch 2> >(grep -v TF_REPEATED_DATA buffer_core)",
             "group": "test",
             "presentation": {
                 "reveal": "always",
