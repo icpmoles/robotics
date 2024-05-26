@@ -5,6 +5,7 @@
 #include <tf2/LinearMath/Quaternion.h>
 #include <iostream>
 #include <fstream>
+#include <string>
 using namespace std;
 
 
@@ -12,11 +13,38 @@ struct simplePose {
     double X, Y, theta;
 };
 
-// std::vector<simplePose> 
-void getList(std::string path){
+  vector<simplePose> getList(std::string path){
+    
+  vector<simplePose> list;
+  
+  ROS_INFO("GOALPUB: launch file did find a  CSV in: %s",path.c_str());
 
-   ROS_INFO("GOALPUB: PAth in getLIST idk %s",path.c_str());
+  string line;
+  ifstream csvfile ("src/second_project/waypoint.csv");
+  
+  ROS_INFO("GOALPUB: moved on");
+  // myfile.open();
+  // myfile << "Writing this to a file.\n";
+  if (csvfile.is_open())
+  {
+    ROS_INFO("GOALPUB: CSV opened ");
+    while ( getline (csvfile,line) )
+    {
+     ROS_INFO("GOALPUB: line: %s ", line.c_str());
+    }
+    csvfile.close();
+  }
 
+  else  {ROS_INFO("GOALPUB: unable to open file %i %i%i%i%i ",csvfile.rdstate(),csvfile.good(),csvfile.eof(),csvfile.fail(),csvfile.bad());
+  
+  
+  }
+
+
+
+  csvfile.close();
+  return list;
+  
 }
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
@@ -43,9 +71,7 @@ int main(int argc, char** argv){
   
 	std::string wp_path;
 	nh_private.getParam("waypoint_path", wp_path); //get l
-  getList(wp_path);
-  ROS_INFO("GOALPUB: csv path is %s",wp_path.c_str());
-// std::vector<simplePose> listwp = 
+  std::vector<simplePose> listwp = getList(wp_path);
   //tell the action client that we want to spin a thread by default
   MoveBaseClient ac("move_base", true);
   
