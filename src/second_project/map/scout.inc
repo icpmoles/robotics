@@ -17,7 +17,7 @@ define scout position
 (
   pose [ 0.0 0.0 0.0 0.0 ]
   
-  localization "odom"
+  localization "gps"
 
 # variance of noise
   odom_error [0.01 0.01 0.0 0.02 ]

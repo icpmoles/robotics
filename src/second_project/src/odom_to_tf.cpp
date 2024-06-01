@@ -46,16 +46,11 @@ void poseCallback(const nav_msgs::Odometry::ConstPtr& msg,
     // br.sendTransform(tf::StampedTransform(basefootprinttobaselink, ros::Time::now(), "base_footprint", "base_link"));
     // br.sendTransform(tf::StampedTransform(basefootprinttobaselink, ros::Time::now(), "base_link", "rslidar"));
 
-    if (i == 0)
-    {br.sendTransform({
+    br.sendTransform({
     tf::StampedTransform(odomtobasefootprint, ros::Time::now(), rf, cf),
     tf::StampedTransform(basefootprinttobaselink, ros::Time::now(), "base_footprint", "base_link"),
     tf::StampedTransform(basefootprinttobaselink, ros::Time::now(), "base_link", "rslidar")
     });
-    i++;}
-    else 
-    br.sendTransform(tf::StampedTransform(odomtobasefootprint, ros::Time::now(), rf, cf));
-
     
 }
 
