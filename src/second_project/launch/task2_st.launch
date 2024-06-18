@@ -54,13 +54,15 @@
   </node>
 
 
-  <!--  **************** Visualisation ****************  -->
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find second_project)/lidar2st.rviz"/>
 
 
   
   <node pkg="second_project" type="goal_pub" name="goal_pub"  output="screen"> 
    <param name="waypoint_path" value="$(find second_project)/waypoints.csv"/>
   </node>
+
+    <!--  **************** Visualisation ****************  -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find second_project)/lidar2st.rviz"/>
+
 </launch>
 
