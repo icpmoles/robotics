@@ -20,7 +20,7 @@ define scout position
   localization "gps"
 
 # variance of noise
-  odom_error [0.01 0.01 0.0 0.02 ]
+  odom_error [0.05 0.05 0.0 0.02 ]
 
   size [ 0.612 0.580 0.40 ]
   origin [ 0.0 0.0 0.0 0.0 ]
